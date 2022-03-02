@@ -1,3 +1,4 @@
+console.log("Running!");
 //Declare variables for cloak here
 const local_title = localStorage.getItem("title");
 const local_icon = localStorage.getItem("icon");
@@ -21,6 +22,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-98DP5VKS42');`
 document.head.append(gascript, inlinegascript);
+console.log("Google Analytics added");
 
 //Turn off GSAP null warnings (if present)
 try {
@@ -28,7 +30,7 @@ try {
     nullTargetWarn: false,
   });
 } catch {
-  //empty b/c no need for return
+  console.log("empty b/c no need for return :)");
 }
 
 // Credit to Team r0cket for the original code :)
