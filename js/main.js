@@ -33,4 +33,13 @@ try {
   console.log("empty b/c no need for return :)");
 }
 
+//Fetch visit count
+const visitapi = "https://api.countapi.xyz/update/3kh0.github.io/main-counter/?amount=1";
+fetch(visitapi)
+.then((res) => res.json())
+.then((res) => {
+  // document.getElementById("visit-count").innerText = " " + parseInt(res.value).toLocaleString("en-US");
+  console.log(" " + parseInt(res.value).toLocaleString("en-US"));
+});
+
 // Credit to Team r0cket for the original code :)
