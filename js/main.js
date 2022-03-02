@@ -1,3 +1,5 @@
+console.log("3kh0.github.io")
+
 console.log("Running!");
 //Declare variables for cloak here
 const local_title = localStorage.getItem("title");

@@ -5349,23 +5349,6 @@ var YaGames;
         const v = getDebugLog("SDK env"),
             _ = !0;
         v("IS_PROD", _);
-        const y = (0, s.Z)(window.location),
-            m = "true" === y.yandexapp,
-            b = ((y.origin || void 0 || window.location.origin).match(/[\.\/]yandex\.([a-z\.]+)$/) || ["", "ru"])[1],
-            w = "https://games-sdk.yandex.%TLD%/games/api/sdk/v1".replace("%TLD%", b),
-            E = ("passport".concat("", ".yandex.").concat(b), "https://avatars.mds.yandex.net");
-        function setTmpPlayTimeTimer(e) {
-            window.setTimeout(() => {
-                const t = { borrowParams: { ["tmpPlayTime".concat(e)]: { appVersion: window.APP_VERSION } } };
-                new Image().src = "https://mc.yandex.ru/watch/49035923?&page-url="
-                    .concat(encodeURIComponent(window.location.href), "&page-ref=")
-                    .concat(encodeURIComponent(document.referrer), "&charset=utf-8&site-info=")
-                    .concat(encodeURIComponent(JSON.stringify(t)));
-            }, 1e3 * e);
-        }
-        const S = function setTmpPlayTimeTimers() {
-            setTmpPlayTimeTimer(5), setTmpPlayTimeTimer(60), setTmpPlayTimeTimer(900);
-        };
         function waitDocumentReady() {
             return new Promise((e) => {
                 if ("loading" === document.readyState) {
