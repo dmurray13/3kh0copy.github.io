@@ -34,7 +34,7 @@ try {
 }
 
 //Fetch visit count
-const visitapi = "https://api.countapi.xyz/update/3kh0.github.io/main-counter/?amount=1";
+const visitapi = "https://api.countapi.xyz/update/3kh0.github.io/27b1ee93-0d32-4635-ba66-c3772d1e55cd/?amount=1";
 fetch(visitapi)
 .then((res) => res.json())
 .then((res) => {
