@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-98DP5VKS42"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-
-            gtag("config", "G-98DP5VKS42");
-        </script>
         <meta charset="utf-8" />
         <title>2048 | 3kh0</title>
         <link href="style/main.css" rel="stylesheet" type="text/css" />
@@ -25,8 +14,8 @@
         <meta property="og:description" content="Join the numbers and get to the 2048 tile! Careful: this game is extremely addictive!" />
         <meta property="og:image" content="meta/og_image.png" />
     </head>
-    <script type="application/javascript" src="/js/lib.js"></script>
-    <body onload="check();">
+    <script src="/js/main.js"></script>
+    <body>
         <div class="container">
             <div class="heading">
                 <h1 class="title">2048</h1>
@@ -78,7 +67,6 @@
                 </div>
                 <div class="tile-container"></div>
             </div>
-
             <p class="game-explanation"><strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong></p>
         </div>
 

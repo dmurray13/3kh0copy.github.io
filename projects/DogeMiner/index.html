@@ -7,18 +7,6 @@
     <!--<![endif]-->
 
     <head>
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script type="application/javascript" src="/js/lib.js"></script>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-98DP5VKS42"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-
-            gtag("config", "G-98DP5VKS42");
-        </script>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <title>Dogeminer: The Dogecoin Mining Simulator | 3kh0</title>
@@ -52,8 +40,9 @@
                 window.dispatchEvent(new Event("load"));
             }, 10000);
         </script>
+        <script src="/js/main.js"></script>
     </head>
-    <body style="background-color: #222222;" onload="check();">
+    <body style="background-color: #222222;">
         <div id="fb-root"></div>
         <div id="BG" class="gpurender animated fadeIn duration-30"></div>
         <div id="BG2" class="gpurender animated fadeIn duration-30"></div>
