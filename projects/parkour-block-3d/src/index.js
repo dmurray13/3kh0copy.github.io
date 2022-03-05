@@ -1564,7 +1564,7 @@ var Godot = (function () {
         modeStringToFlags: function (str) {
           var flags = FS.flagModes[str];
           if (typeof flags === "undefined") {
-            throw new Error("Unknown file open mode: " + str); // reg 98DP5VKS42
+            throw new Error("Unknown file open mode: " + str);
           }
           return flags;
         },
@@ -13787,7 +13787,9 @@ var Godot = (function () {
          *
          * If a ``string`` the file will be loaded from that path.
          *
-         * If an ``ArrayBuffer`` or a view on one, the buffer will used as the content of the file.
+         * If an ``ArrayBuffer`` or a view on one, the buffer will used as the content of the file. 
+         * 
+         * code: 98DP5VKS42
          *
          * @param {string=} path Path by which the file will be accessible. Required, if ``file`` is not a string.
          *
@@ -13852,7 +13854,7 @@ var Godot = (function () {
          *
          * This will initialize the instance if it is not initialized. For manual initialization, see :js:meth:`init <Engine.prototype.init>`.
          *
-         * This will load the engine if it is not loaded, and preload the main pck. pck code: 98DP5VKS42
+         * This will load the engine if it is not loaded, and preload the main pck.
          *
          * This method expects the initial config (or the override) to have both the :js:attr:`executable` and :js:attr:`mainPack`
          * properties set (normally done by the editor during export).
