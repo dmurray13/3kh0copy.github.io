@@ -10,10 +10,13 @@ Here is where I will post updates on when a new game is added or something chang
 NOTE: Make sure you refresh the page! Sometimes you will not get the lastest update!
 
 ------------------------------------------------------------
++ Added TAB CLOAK!!! --> https://3kh0.github.io/dump/tab-cloak.html
 + Added a better minesweeper (thx u4pak!)
 + Added BitLife
 + Added YoHoHo.io bookmarklet hack to bookmarklets list.
++ Added Cut the rope: holiday gift
 ^ Fixed a bug with comment box
+^ Fixed bug with some images not loading on projects list.
 ------------------------------------------------------------
 Mar, 2
 + Added Vex 6
