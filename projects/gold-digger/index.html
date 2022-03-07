@@ -1,0 +1,2126 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <script>
+     ;(function(scope) {
+  var ael = 'addEventListener', rel = 'removeEventListener';
+
+  // Date.now()
+  if(typeof Date.now !== 'function') {
+    Date.now = function date_now() {
+      return +new Date();
+    };
+  }
+
+  // performance.now()
+  var performance = window.performance;
+  if(typeof performance === 'undefined') window.performance = performance = {};
+  if(typeof performance.now !== 'function') {
+    var nowOffset = Date.now();
+    if(performance.timing && performance.timing.navigationStart) {
+      nowOffset = performance.timing.navigationStart;
+    }
+    performance.now = function perf_now() {
+      return Date.now() - nowOffset;
+    };
+  }
+
+  // Function.bind()
+  if(typeof Function.prototype.bind !== 'function') (function() {
+    Function.prototype.bind = function bind(thisArg) {
+      var target = this, i = arguments.length - 1, boundArgs = [];
+      if(i > 0) {
+        boundArgs.length = i;
+        while (i--) boundArgs[i] = arguments[i + 1];
+      }
+      if(typeof target !== 'function') throw new TypeError();
+      function bound() {
+        var i = arguments.length, args = new Array(i);
+        while (i--) args[i] = arguments[i];
+        args = boundArgs.concat(args);
+        return target.apply(this instanceof bound ? this : thisArg, args);
+      }
+      bound.prototype = (function F(proto) {
+        if(proto) F.prototype = proto;
+        if(!(this instanceof F)) return new F();
+      })(target.prototype);
+      return bound;
+    };
+  })();
+
+  // Object.create()
+  // Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+  if(typeof Object.create !== 'function') (function() {
+    Object.create = function(proto, propertiesObject) {
+      if(typeof proto !== 'object' && typeof proto !== 'function') {
+        throw new TypeError('Object prototype may only be an Object: ' + proto);
+      } else if(proto === null) {
+        throw new Error('This browser\'s implementation of Object.create is a shim and doesn\'t support "null" as the first argument.');
+      }
+      if(typeof propertiesObject != 'undefined') {
+        throw new Error('This browser\'s implementation of Object.create is a shim and doesn\'t support a second argument.');
+      }
+      function F() {}
+      F.prototype = proto;
+      return new F();
+    };
+  })();
+
+  // Object.assign()
+  // Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+  if(typeof Object.assign !== 'function') (function() {
+    // Must be writable: true, enumerable: false, configurable: true
+    Object.defineProperty(Object, 'assign', {
+      value: function assign(target, varArgs) { // .length of function is 2
+        if(target === null) throw new TypeError('Cannot convert undefined or null to object');
+        var to = Object(target);
+        for(var index = 1; index < arguments.length; index++) {
+          var nextSource = arguments[index];
+          if(nextSource !== null) { // Skip over if undefined or null
+            for(var nextKey in nextSource) {
+              // Avoid bugs when hasOwnProperty is shadowed
+              if(Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                to[nextKey] = nextSource[nextKey];
+              }
+            }
+          }
+        }
+        return to;
+      },
+      writable: true,
+      configurable: true
+    });
+  })();
+
+  // Object.keys()
+  // Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+  if(typeof Object.keys !== 'function') (function() {
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    var hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString');
+    var dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'];
+    var dontEnumsLength = dontEnums.length;
+    Object.keys = function(obj) {
+      if(typeof obj !== 'function' && (typeof obj !== 'object' || obj === null)) throw new TypeError('Object.keys called on non-object');
+      var keyList = [], prop, i;
+      for(prop in obj) {
+        if(hasOwnProperty.call(obj, prop)) keyList.push(prop);
+      }
+      if(hasDontEnumBug) {
+        for(i = 0; i < dontEnumsLength; i++) {
+          if(hasOwnProperty.call(obj, dontEnums[i])) keyList.push(dontEnums[i]);
+        }
+      }
+      return keyList;
+    };
+  })();
+
+  // Check support for passive event listeners
+  (function() {
+    var etp = (typeof EventTarget === 'undefined' ? Node : EventTarget).prototype, orgAel = etp[ael], orgRel = etp[rel], supportsPassive = false;
+    try {
+      var o = Object.defineProperty({}, 'passive', { get: function() { supportsPassive = true; }});
+      scope[ael]('test', null, o);
+      scope[rel]('test', null, o);
+    } catch(err) { console.error('Polyfill error:', err); }
+    if(!supportsPassive) {
+      etp[ael] = function(type, handler, o) {
+        if(typeof o === 'object') o = o.capture; // object -> bool
+        return orgAel.call(this, type, handler, o);
+      };
+      etp[rel] = function(type, handler, o) {
+        if(typeof o === 'object') o = o.capture; // object -> bool
+        return orgRel.call(this, type, handler, o);
+      };
+    }
+  })();
+
+  // Redefining escape and create encodeURI polyfill
+  if(typeof scope.encodeURI !== 'function') (function() {
+    var orgEscape = scope.escape;
+    scope.encodeURI = scope.escape = function(input) {
+
+      return orgEscape(input);
+    };
+  })();
+
+  // According to
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+  if(typeof Array.prototype.map !== 'function')
+    Array.prototype.map = function (thunk,thisArg ) {
+      thisArg  = thisArg || this;
+      var result = Array(thisArg.length);
+      for (var i = 0; i < thisArg.length; i++)
+        result[i] = thunk(thisArg[i],i,thisArg);
+      return result;
+    }
+
+  /* "This crazy polyfill solves issues on Android where isFinite does not."
+   *
+   * JT@2021-03-11: The above comment is truncated.  The need for this
+   * polyfill is not yet well understood.  The original commit also
+   * had a _second_ polyfill for Number.isFinite(), but there are _no_
+   * uses for that whatsoever. So we removed that polyfill. */
+  if (typeof window.isFinite !== 'function') {
+    window.isFinite = function isFinite(value) {
+      // 1. If Type(number) is not Number, return false.
+      if (typeof value !== 'number') {
+        return false;
+      }
+      // 2. If number is NaN, +∞, or −∞, return false.
+      if (value !== value || value === Infinity || value === -Infinity) {
+        return false;
+      }
+      // 3. Otherwise, return true.
+      return true;
+    };
+  }
+}(this));
+
+// tiny_promise by sven. JT@2021-03-11: newlineophobia?
+(function(scope){var queue=[];function async(callback){queue.push(callback);if(queue.length===1)async.async()}async.run=function(){while(queue.length){queue[0]();queue.shift()}};async.async=function(){setTimeout(async.run)};function P(executor){this.state=P.State.PENDING;this.value=undefined;this.deferred=[];var promise=this;try{executor(function(x){promise.resolve(x)},function(r){promise.reject(r)})}catch(e){promise.reject(e)}}P.State={RESOLVED:0,REJECTED:1,PENDING:2};P.reject=function(r){return new P(function(resolve,reject){reject(r)})};P.resolve=function(x){return new P(function(resolve,reject){resolve(x)})};P.all=function all(iterable){return new P(function(resolve,reject){var count=0,result=[];if(iterable.length===0)resolve(result);function resolver(i){return function(x){result[i]=x;count+=1;if(count===iterable.length)resolve(result)}}for(var i=0;i<iterable.length;i+=1){P.resolve(iterable[i]).then(resolver(i),reject)}})};P.race=function race(iterable){return new P(function(resolve,reject){for(var i=0;i<iterable.length;i+=1){P.resolve(iterable[i]).then(resolve,reject)}})};P.prototype.resolve=function resolve(x){var promise=this;if(promise.state===P.State.PENDING){if(x===promise)throw new TypeError;var called=false;try{var then=x&&x["then"];if(x!=null&&typeof x==="object"&&typeof then==="function"){then.call(x,function(x){if(!called)promise.resolve(x);called=true},function(r){if(!called)promise.reject(r);called=true});return}}catch(e){if(!called)promise.reject(e);return}promise.state=P.State.RESOLVED;promise.value=x;promise.notify()}};P.prototype.reject=function reject(reason){var promise=this;if(promise.state===P.State.PENDING){if(reason===promise)throw new TypeError;promise.state=P.State.REJECTED;promise.value=reason;promise.notify()}};P.prototype.notify=function notify(){var promise=this;async(function(){if(promise.state!=P.State.PENDING){while(promise.deferred.length){var deferred=promise.deferred.shift(),onResolved=deferred[0],onRejected=deferred[1],resolve=deferred[2],reject=deferred[3];try{if(promise.state===P.State.RESOLVED){if(typeof onResolved==="function")resolve(onResolved.call(undefined,promise.value));else resolve(promise.value)}else if(promise.state===P.State.REJECTED){if(typeof onRejected==="function")resolve(onRejected.call(undefined,promise.value));else reject(promise.value)}}catch(e){reject(e)}}}})};P.prototype.catch=function(onRejected){return this.then(undefined,onRejected)};P.prototype.then=function then(onResolved,onRejected){var promise=this;return new P(function(resolve,reject){promise.deferred.push([onResolved,onRejected,resolve,reject]);promise.notify()})};if(scope.Promise===undefined)scope.Promise=P})(this);
+;
+
+    </script>
+      <script defer src="https://frvr.com/gdpr/frvrgdprclient.js"></script>
+  <script defer src="https://frvr.com/grac/frvrgracclient.js"></script>
+
+    <script>
+     window.__FRVR = window.__FRVR || {};
+     window.__FRVR.startTime = Date.now();
+     window.__FRVR.gameIsLoaded = false;
+     window.__FRVR.createErrorHandler = function (hint) {
+         return function(err) {console.error(hint, err)};
+     }
+
+    </script>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+
+    <!--
+    /**
+    * @author Chris Benjaminsen http://chrisbenjaminsen.com/ @benjaminsen
+    */
+    /** @license
+    Gold Digger FRVR 2.0.5
+    More info at http://frvr.com
+
+    Copyright (c) 2013+ FRVR Limited
+
+    All Rights Reserved!
+    FRVR is a registered trademark of FRVR Limited
+    */
+    /**
+    Well hello there!
+
+    I see you are interested in the details of how this game was made!
+    It's written using a custom HTML5 engine built around PixiJS.
+
+    While I can't tell you more on the how, there is much more on the why to be find at 
+    http://blog.chrisbenjaminsen.com where I write frequent status updates on the games I build
+    under the FRVR brand - - including a 100% honest track record of money earned and spend.
+
+    Hack on!
+    Chris Benjaminsen
+    chrisbenjaminsen.com
+
+    - - - - - - - - - - - - - -
+
+    Gold Digger would not be possible without the following open source projects:
+
+    pixi.js - v2.2.3
+    Copyright (c) 2012-2014, Mat Groves
+    http://goodboydigital.com/
+    pixi.js is licensed under the MIT License.
+    http://www.opensource.org/licenses/mit-license.php
+    Mat Groves http://matgroves.com/ @Doormat23
+    */
+    -->
+
+      <link rel="manifest" href="./manifest.json">
+
+      <link rel="icon" type="image/png" href="favicon.png" />
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Gold Digger FRVR">
+<meta name="theme-color" content="#202020">
+<meta name="HandheldFriendly" content="true" />
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="google" content="notranslate" />
+
+<link rel="apple-touch-icon" sizes="60x60" href="img/icon60x60.png"/>
+<link rel="apple-touch-icon" sizes="76x76" href="img/icon76x76.png"/>
+<link rel="apple-touch-icon" sizes="120x120" href="img/icon120x120.png"/>
+<link rel="apple-touch-icon" sizes="196x196" href="img/icon196x196.png"/>
+<link rel="apple-touch-icon" sizes="256x256" href="img/icon256x256.png"/>
+<link rel="apple-touch-icon" sizes="1024x1024" href="img/icon1024x1024.png"/>
+
+<meta property="og:title" content="Gold Digger FRVR - Deep Mining" />
+<meta property="og:description" content="Start mining and get tons of gold in the best free digging game ever! Can you become the speleology tycoon?" />
+<meta property="og:site_name" content="Gold Digger FRVR"/>
+<meta property="og:url" content="https://golddigger.frvr.com/" />
+<meta property="og:type" content="game" />
+<meta property="og:locale" content="en" />
+<meta property="og:image" content="https://golddigger.frvr.com/v/1636996438040/i/web/facebook01.png" />
+<meta property="fb:app_id" content="2521873641173108" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@FRVRGames" />
+<meta name="twitter:creator" content="@Benjaminsen" />
+<meta name="twitter:title" content="Gold Digger FRVR - Deep Mining - Dig and Match Exploration" />
+<meta name="twitter:image" content="https://golddigger.frvr.com/v/1636996438040/i/web/twitter01.png" />
+<meta name="twitter:description" content="Start mining and get tons of gold in the best free digging game ever! Can you become the speleology tycoon?" />
+
+<meta name="twitter:app:name:iphone" content="Gold Digger FRVR" />
+<meta name="twitter:app:id:iphone" content="1185836177" />
+<meta name="twitter:app:name:ipad" content="Gold Digger FRVR" />
+<meta name="twitter:app:id:ipad" content="1185836177" />
+
+<meta name="twitter:app:name:googleplay" content="Gold Digger FRVR" />
+<meta name="twitter:app:id:googleplay" content="com.frvr.golddigger" />
+
+<meta name="description" content="Start mining and get tons of gold in the best free digging game ever! Can you become the speleology tycoon?">
+<meta name="keywords" content="pickaxe,rush,explore,cave,dirt,golden,miner,maze,drill,map,rocks,match,treasure,archeology,simulator">
+
+    <title>Gold Digger | 3kh0</title>
+
+    <style>
+
+body {
+    background:#c8c8c8;
+    overflow:hidden;
+    position:fixed;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    border:0px;padding:0px;margin:0px;
+    width:100%;
+    height:100%;
+    padding-top: constant(safe-area-inset-top);
+    overscroll-behavior: none;
+}
+
+preloader{
+    display:block;
+    width:100%;
+    height:100%;
+    background: #FEFEFE;
+    position:fixed;
+    z-index:5;
+}
+preloader.dark {
+    background: #1C1C1C;
+}
+
+preloader canvas, preloader img{
+    position: fixed;
+}
+
+preloader loadbar{
+    display:none;
+    position:fixed;
+    border:1px solid #A4A4A4;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+preloader loadbar div{
+    display:block;
+    width:0%;
+    height:100%;
+    background-color:#02BDFF;
+}
+
+#gameCanvas{
+    position: fixed;
+    top:0px;
+    left:0px;
+    width:0px;
+    height:0px;
+    background-color:#000000
+}
+
+#overlay{
+    position:absolute;
+    z-index:3;
+    left:50%;
+    transform: translate(-50%, -50%);
+    visibility:hidden;
+    bottom:3px;
+    overflow:hidden;
+    text-align: center;
+}
+
+#overlay div{
+    float:left;
+}
+
+#overlay.cn {
+    margin-left: -190px;
+}
+
+/* Google+ share button */
+#overlay.cn div#___plusone_0 {
+    width: 68px !important;
+}
+
+#overlay.cn div#___plusone_0 iframe {
+    position: relative !important;
+    top: -4px !important;
+}
+
+/* Sina Weibo share button */
+#overlay wb\:share-button iframe {
+    width: 105px !important;
+}
+
+/* QZone share button */
+#overlay iframe[version="1.0"] {
+    position: relative !important;
+    top: -2px;
+}
+
+@-ms-viewport{width:100%}
+
+content{
+    background-color:#ffffff;
+    display: block;
+    padding:20px;
+    height:100%;
+    overflow:scroll;
+}
+
+content metadata{
+    float:right;
+    margin-left:10px;
+    text-align:center;
+}
+
+h1{
+    margin:0px;
+    font-weight:100;
+    font-size:50px;
+}
+a{
+    line-height:2em;
+}
+h3{
+    margin-bottom:0px;
+}
+
+#pwa_prompt {
+    height: 100%;
+    width: 100%;
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    background-color: rgba(0,0,0,0.85);
+    text-align: center;
+    color: white;
+}
+
+#pwa_prompt.hidden {
+    display: none;
+}
+
+#pwa_prompt .close {
+    display: block;
+    position: absolute;
+    top: 5px;
+    right: 2%;
+    cursor: pointer;
+    height: 48px;
+    width: 48px;
+    background-color: white;
+    text-align: center;
+    line-height: 48px;
+    color: black;
+    font-size: 32px;
+    border-radius: 50%;
+
+}
+
+#pwa_prompt img {
+    display: block;
+    max-width: 60%;
+    max-height: 33%;
+    margin: 20px auto;
+    margin-top: 30px;
+}
+
+#pwa_prompt span.copy {
+    display: block;
+    font-weight: bold;
+    font-size: 32px;
+}
+
+#pwa_prompt span.copy.arrow {
+    font-size: 64px;
+}
+
+@media screen and (max-height: 400px) {
+    #pwa_prompt img {
+        margin-bottom: 10px;
+    }
+    #pwa_prompt span.copy {
+        font-size: 24px;
+    }
+    #pwa_prompt span.copy.arrow {
+        font-size: 48px;
+    }
+}
+
+@keyframes w{0%{transform:rotate(0deg);}20%{transform:rotate(-3deg) scale(1.4) translate(0px,-5px);}50%{transform:rotate(3deg) scale(1.4) translate(0px,-5px);}80%{transform:rotate(-3deg) scale(1.4) translate(0px,-5px);}100%{transform:rotate(0deg);}}
+.w {animation:w 1.5s 1;}
+
+</style>
+
+    <script type="application/json" class="cohort">
+     {
+       "version": "2.0.5",
+       "name": "golddigger",
+       "gaPath": "golddigger/2.0.5/",
+       "vpath": "src/",
+       "spath": "js/external.js",
+       "legacyCoords" : true,
+       "configJs": {"id":"golddigger","version":"2.0.5","build":"2004001","gaId":"UA-54081731-1","gaGameId":"UA-54081731-48"},
+       "moreJson": {"ab_tests":{"ab_ftue":{"cohorts":["disabled","enabled"]},"ab_blastpreview":{"cohorts":["disabled","enabled"]},"ab_huawei_reward_ads_v1":{"cohorts":["disabled","enabled"]}},"track-ga":{"gaIds":{"all":"UA-54081731-1"},"state":"{appId=app_id,appName=app_name,appVersion=app_version,metric1=play_session_count,dimension2=cohort,dimension4=play_session_id,dimension3=device_id,metric2=days_elapsed,metric3=days_played,dimension5=channel,dimension6=entry_point,dimension7=utm_string,dimension8=screen,dimension9=facebook_context,metric4=currency_amount,metric5=missions_completed,metric6=progression,metric7=games_played}","events":{"default":"name,,value,_params","options_change":"name,option_name:option_value","game_end":"name,level_id,game_duration","game_play_start,game_continue_used":"name,level_id","keepalive,new_user,mission_success":"name","coin_spent,tutorial_step_completed,session_start":"name,,value","game_loaded":"name,,loading_time","social_engage,engage":"'engage',engage_id:button_placement,1","play_with_friend":"name,,1","share,invite":"name,button_placement,1","cross_promotion_show":"name,button_placement,1","cross_promotion_click,cross_promotion_success,cross_promotion_failure":"name,target_game,1","ad_mandatory_request":"name,,value,{_merge=_params,dimension13=provider}","ad_mandatory_response":"name,ad_response,value,{_merge=_params,dimension13=provider}","ad_mandatory_show":"name,,value,{_merge=_params,dimension13=provider}","ad_mandatory_finish":"name,ad_result,value,{_merge=_params,dimension13=provider}","ad_mandatory_blocked":"name,,value,{_merge=_params,dimension13=provider}","ad_mandatory_pass":"name,,value,{_merge=_params,dimension13=provider}","ad_mandatory_throttled":"name,throttle_type,value,{_merge=_params,dimension13=provider}","ad_rewarded_request":"name,,value,{_merge=_params,dimension13=provider}","ad_rewarded_response":"name,ad_response,value,{_merge=_params,dimension13=provider}","ad_rewarded_show":"name,,value,{_merge=_params,dimension13=provider}","ad_rewarded_finish":"name,ad_result,value,{_merge=_params,dimension13=provider}","ad_rewarded_blocked":"name,,value,{_merge=_params,dimension13=provider}","ad_rewarded_pass":"name,,value,{_merge=_params,dimension13=provider}","ad_rewarded_throttled":"name,throttle_type,value,{_merge=_params,dimension13=provider}","chatbot_noshow,chatbot_show,chatbot_success,chatbot_issubscribed,chatbot_useraborted":"name,,","chatbot_error":"name,reason,"}},"track-facebook_events":{"blacklist":"iap_request_payment,iap_request_payment_success","events":{"default":"name,{_merge=state,_merge=_params}","ftue":"'COMPLETED_TUTORIAL',{SUCCESS=completed,STEP_NUMBER=step_number,STEP_NAME=step_name,STEP_NUMBER=ftue_step_number,STEP_NAME=ftue_step_name}","ad_rewarded_finish":"'AD_IMPRESSION',{AD_TYPE='rewarded_video',SUCCESS=value}","ad_mandatory_finish":"'AD_IMPRESSION',{AD_TYPE='interstitial',SUCCESS=value}","coin_spent":"'SPENT_CREDITS',{AMOUNT=amount,DESCRIPTION='coins',CONTENT=product}","gem_spent":"'SPENT_CREDITS',{AMOUNT=amount,DESCRIPTION='gems',CONTENT=product}","gem_get":"'UNLOCKED_ACHIEVEMENT',{QUANTITY=value,DESCRIPTION='gem_get'}","popup_claim_reward":"'UNLOCKED_ACHIEVEMENT',{DESCRIPTION='claim_reward'}","levelup_newlevel":"'ACHIEVED_LEVEL',{LEVEL=level}","iap_request_payment":"'INITIATED_CHECKOUT',{CONTENT_ID=productId,NUM_ITEMS='1'}","iap_request_payment_success":"'PURCHASED',{CONTENT_ID=productId,NUM_ITEMS='1'}","iap_request_payment_failed":"'CHECKOUT_CANCELED',{CONTENT_ID=productId,NUM_ITEMS='1'}","rate":"'RATED',{MAX_RATING_VALUE=max_rating_value,RATE=rate_value}"}},"track-frvr":{"state":"{app_version,engine_version,app_build,cohort,channel,games_played,play_session_id,play_session_count,days_elapsed,facebook_player_id,facebook_context_type,facebook_entrypoint,utm_source,utm_medium,utm_campaign,utm_term,utm_content,facebook_referral_player_id,remote_user_id,non_interaction,device_width,device_height,global_user_id,web_url,script_version,social_session_id,ab_exp,ab_cohort_name,ab_cohort_weight,page_session_id,fb_instant_game_ad_id,fb_segment}","events":{"default":"name,value,{_merge=state,_merge=_params}"}}},
+       "jsSize": 2685579,
+       "supportedLanguages": ["ru","zh-Hans"]
+     }
+    </script>
+  </head>
+  <body>
+
+    <!-- TODO debugcode, move me to provider -->
+    <div id="debug" style="position:absolute; color:red; left:40px; z-index: 9999999"></div>
+
+      <script>
+       window.__antialias = false
+      </script>
+
+        <script>
+
+         window.__FRVR.buildTimePlatform = 'web';
+
+         ;(function () {
+  function getTLD(){
+    var fallback = document.location.hostname;
+    var hostname = fallback.split('.');
+    for(var i = hostname.length - 1; i >= 0; i--) {
+      var host = hostname.slice(i).join('.');
+      document.cookie = 'get_tld=test;domain=.' + host + ';';
+      if(document.cookie.indexOf('get_tld') > -1){
+        document.cookie = 'get_tld=;domain=.' + host +
+          ';expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        return host;
+      }
+    }
+    return '';
+  }
+
+  function generateUID(separator) {
+    var delim = separator || "-";
+    function S4() {
+      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    var st = ((new Date).getTime().toString(16)).slice(0,11) +
+        (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1,2);
+    return (S4() + S4() + delim + S4() + delim +
+            S4() + delim + S4() + delim + st);
+  }
+
+  window.__FRVR.globalUserId = function () {
+    var retval;
+    var cm = document.cookie.match('^(?:.*_frvr=([^;]*)).*$');
+
+    retval = (cm && cm[1]) || generateUID();
+
+    // Now update it, so that the validity gets extended
+    var result = new Date();
+    result.setDate(result.getDate() + 730);
+    document.cookie = "_frvr=" + retval +
+      "; path=/; expires=" + new Date(result).toUTCString() +
+      "; domain=" + getTLD() + ";";
+
+    return retval;
+  }
+
+  window.__FRVR.getChannel = function () {
+    var channel = 'other'
+    var map = {
+      edge: 'web_edge',
+      firefox: 'web_firefox',
+      opera: 'web_opera',
+      safari: 'web_safari',
+      chrome: 'web_chrome',
+      samsungBrowser: 'web_samsung',
+      samsungBrowserM4S: 'web_samsung_m4s',
+      silk: 'web_silk',
+      chromeWrapper: 'chromeos',
+      androidWrapper: 'android',
+      iOSWrapper: 'ios',
+      rcs: 'rcs',
+      samsungAppStore: 'samsung_galaxy_store',
+      facebookInstant: 'facebook_instant',
+      facebookAppWeb: 'facebook_canvasweb',
+      facebookApp: 'facebook_canvas',
+      samsungBixby: 'bixby',
+      samsungGameLauncher: 'samsung_game_launcher',
+      samsungInstantPlay: 'samsung_instant_play',
+      iMessageContext: 'imessage',
+      spilGamesWrapper: 'spil',
+      vkru: 'vkru',
+      okru: 'okru',
+      kongregate: 'kongregate',
+      kik: 'kik',
+      twitter: 'twitter',
+      twitch: 'twitch',
+      hago: 'hago',
+      oppoGlobal: 'oppo_global',
+      tMobile: 'tmobile',
+      huawei: 'huawei',
+      huaweiquickapp: 'huawei_quick_app',
+      yandex: 'yandex',
+      crazyGames: 'crazy_games',
+      lgtv: 'lg_tv',
+      jioStb: 'jio_stb',
+      myJio: 'jio_my',
+      jioGameslite: 'jio_gameslite',
+      rocketChat: 'rocket_chat',
+      ufone: 'ufone',
+      game8: 'game8',
+      mailonline: 'mail_online',
+      discord: 'discord'
+    };
+    var platformIs = window.__FRVR.platformIs;
+    // If there are multiple instances of truthy values, the final one will be used as the channel in the order of map
+    for (var key in map) if (platformIs[key]) channel = map[key];
+    if ((channel === 'web_safari' || channel === 'web_chrome') && platformIs.iOS) channel += '_ios';
+    return channel;
+  }
+
+  //Local cache to preserve querystrings
+  var base_url = window.location.href;
+  window.__FRVR.getQueryString = function(name){
+      var url = base_url;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  window.__FRVR.platformIs = new (function(w,n,u,l) {
+    var that = this;
+
+    // adding build platform variable e.g. XS.is['jio-stb']
+    that[window.__FRVR.buildTimePlatform] = true
+
+    /**
+     * True if we're in an Android browser or app
+     * @memberof XS.is
+     */
+    that.android = /(android)/i.test(u) && !/(Windows)/i.test(u);
+    /**
+     * Returns android version of browser view as float. E.g. 4.2 if we are running "4.2.1"
+     * Hack? Should we move this to a more sensiable location?
+     * @memberof XS.is
+     */
+    that.androidVersion = (function() {
+      var match = navigator.userAgent.toLowerCase().match(/android\s([0-9\.]*)/);
+      return parseFloat(match ? match[1] : 0);
+    })();
+    /**
+     * True if we're in Firefox Mobile
+     * @memberof XS.is
+     */
+    that.firefoxMobile = /(Mobile)/i.test(u) && /(Firefox)/i.test(u);
+    /**
+     * True if we're in an old Android Device
+     * @memberof XS.is
+     */
+    that.slow = that.android && that.androidVersion < 6
+    /**
+     * True if we're in an iOS browser or app
+     * @memberof XS.is
+     */
+    that.iOS = /(ipod|iphone|ipad)/i.test(u) || (/(Macintosh)/i.test(u) && 'ontouchend' in document); // iPadOS uses the same browser that macOS
+    /**
+     * True if we're in Windows Mobile
+     * @memberof XS.is
+     */
+    that.windowsMobile = /(IEMobile)/i.test(u);
+    /**
+     * True if we're in the silk browser
+     * @memberof XS.is
+     */
+    that.silk = /(silk)/i.test(u);
+    /**
+     * True if we're in the Clay app context
+     * @memberof XS.is
+     */
+    that.clay = /(clay\.io)/i.test(l);
+    /**
+     * True if we're a Facebook Canvas app
+     * @memberof XS.is
+     */
+    that.facebookApp = /(fb_canvas)/i.test(l);
+    /**
+     * True if we're a Facebook Canvas Web app
+     * @memberof XS.is
+     */
+    that.facebookAppWeb = /(fb_canvas_web)/i.test(l);
+    /**
+     * True if we're running in an iframe
+     * @memberof XS.is
+     */
+    that.iframed = w.top !== w.self;
+    /**
+     * True if we're running in iOS Safari standalone mode
+     * @memberof XS.is
+     */
+    that.standalone = 'standalone' in n && n.standalone;
+    /**
+     * True if we're running on an iPhone or iPod
+     * @memberof XS.is
+     */
+    that.mobileiOSDevice = u.match(/iPhone/i) || u.match(/iPod/i);
+    /**
+     * True if we're running on Kongregate
+     * @memberof XS.is
+     */
+    that.kongregate = /(kongregateiframe)/i.test(l);
+    /**
+     * True if we're running in the KIK messenger
+     * @memberof XS.is
+     */
+    that.kik = /(kik_canvas)/i.test(l);
+    /**
+     * True if we're running in a Twitter web view
+     * @memberof XS.is
+     */
+    that.twitter = /(twitter)/gi.test(u);
+    /**
+     * True if we're running in Chrome
+     * @memberof XS.is
+     */
+    that.chrome = /Chrome\//.test(u);
+    /**
+     * True if we're running in Safari
+     * @memberof XS.is
+     */
+    that.safari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)
+    /**
+     * True if we're running from HTTPS
+     * @memberof XS.is
+     */
+    that.secureConnection = window.location.protocol.indexOf('https') == 0
+    /**
+     * True if we're running as a Facebook Instant app
+     * @memberof XS.is
+     */
+    that.facebookInstant = !!window.FBInstant;
+    /**
+     * True if we're running as a Facebook Rooms app
+     * @memberof XS.is
+     */
+    that.facebookRooms = window.isFacebookRooms;
+    /**
+     * True if we're running inside the Spil Games wrapper
+     * @memberof XS.is
+     */
+    that.spilGamesWrapper = /(spilgames)/i.test(l);
+    /**
+     * True if query string parameter 'social' is set to 'on'
+     * @memberof XS.is
+     */
+    that.social = window.__FRVR.getQueryString("social") == "on";
+    /**
+     * True if query string parameter 'ads' is set to 'off'
+     * @memberof XS.is
+     */
+    that.advertisementIsDisabled = window.__FRVR.getQueryString("ads") == "off"
+    /**
+     * True if query string parameter 'int' is set to 'off' window.__FRVR.getQueryString("partnerid")
+     * @memberof XS.is
+     */
+    that.advertisementInterstitialDisabled = window.__FRVR.getQueryString("int") == "off"
+    /**
+     * True if the advertisement overlay is enabled (if we're not iframed, or inside a partner wrapper)
+     * @memberof XS.is
+     */
+    that.advertisementOverlayEnabled = (!that.iframed)||that.spilGamesWrapper||window.__FRVR.getQueryString("partnerid");
+
+    /**
+     * True if nosoc flag is turned on, and social links and buttons should be supressed
+     * @memberof XS.is
+     */
+    that.nosoc = window.__FRVR.getQueryString('nosoc')=="1"
+    /**
+     * True if the url contains ?fb
+     * @memberof XS.is
+     */
+    that.facebookAd = /(\/\?fb)/i.test(l)
+
+    /**
+     * True if we're on any of the mobile platform contexts (android, ios, windows mobile, etc)
+     * @memberof XS.is
+     */
+    that.mobile = that.android || that.windowsMobile || that.iOS || that.silk || that.firefoxMobile;
+
+    /**
+     * True if we're inside the FRVR iOS App wrapper
+     * @memberof XS.is
+     */
+    that.iOSWrapper = w.iOSWrapper || false;
+    /**
+     * True if wrapper is running on iPhoneX or later (and hence has a notch) - NB: ONLY WORKS IN WRAPPER SO FAR
+     * @memberof XS.is
+     */
+    that.iPhoneXOrLater = window.__FRVR.getQueryString('iPhoneXOrLater')=="true"
+    /**
+     * True if wrapper is running in iMessage context on iOS
+     * @memberof XS.is
+     */
+    that.iMessageContext = window.__FRVR.getQueryString('iMessage')=="true"
+    /**
+     * True if we're inside the FRVR Android App wrapper
+     * @memberof XS.is
+     */
+    that.androidWrapper = w.androidWrapper || false;
+    /**
+     * True if we're inside the FRVR Chrome App wrapper
+     * @memberof XS.is
+     */
+    that.chromeWrapper = w.isChromeWrapper || false;
+    /**
+     * True if we are a samsung app store app.
+     * @memberof XS.is
+     */
+    that.samsungAppStore = window.__FRVR.getQueryString("androidStore") == "samsung";
+    /**
+     * True if we're inside the FRVR Android or iOS App wrapper
+     * @memberof XS.is
+     */
+     that.appWrapper = w.iOSWrapper || w.androidWrapper || that.samsungAppStore;
+    /**
+     * True if we are using a WebGL Renderer, initialized when XS.renderer is initialized
+     * @memberof XS.is
+     */
+    that.usingWebGLRenderer = false;
+    /**
+     * True if we are using a Canvas Renderer, initialized when XS.renderer is initialized
+     * @memberof XS.is
+     */
+    that.usingCanvasRenderer = false;
+    /**
+     * Is a Jio device STB device. NOTE: this is still required because its being used in games, remove it when we introduce capabilities API.
+     * @memberof XS.is
+     */
+    that.jioStb = !!that['jio-stb']
+    /**
+     * Is a MyJio device
+     * @memberof XS.is
+     */
+    that.myJio = !!that['myjio']
+    /**
+     * Is a MyJio device
+     * @memberof XS.is
+     */
+     that.jioGameslite = !!that['jio-gameslite']
+    /**
+     * Is a Jio device
+     * @memberof XS.is
+     */
+    that.jio = that.jioStb || that.myJio || that.jioGameslite
+    /**
+     * Twitch extension iframe client
+     * @memberof XS.is
+     */
+    that.twitch = window.__FRVR.getQueryString("twitch") == "";
+    /**
+     * VK.RU iframe client
+     * @memberof XS.is
+     */
+    that.vkru = window.__FRVR.getQueryString("vkru") == "";
+    /**
+     * OK.RU iframe client
+     * @memberof XS.is
+     */
+    that.okru = window.__FRVR.getQueryString("okru") == "";
+    /**
+     * t-mobile iframe client
+     * @memberof XS.is
+     */
+    that.tMobile = window.__FRVR.getQueryString("tmobile") == "";
+    /**
+     * Progressive Web App
+     * @memberof XS.is
+     */
+    that.pwa = window.__FRVR.getQueryString("pwa") == "";
+    /**
+     * Windows App
+     * @memberof XS.is
+     */
+    that.windowsApp = window.__FRVR.getQueryString("windowsapp") == "";
+    /**
+     * enableAppStoreLinks - refers to disabling third party app store links in UI
+     * @memberof XS.is
+     */
+    that.enableAppStoreLinks = true;
+    /**
+     * Samsung GalaxyStore PWA website client
+     * @memberof XS.is
+     */
+    that.samsungGalaxyStorePWA = window.__FRVR.getQueryString("samsung") == "" && window.__FRVR.getQueryString("source") == "galaxystore";
+    /**
+     * Samsung GameLauncher PWA website client
+     * @memberof XS.is
+     */
+    that.samsungGameLauncherPWA = ( window.__FRVR.getQueryString("pwa") == "" || window.__FRVR.getQueryString("samsung") == "") && window.__FRVR.getQueryString("source") == "gamelauncher";
+    /**
+     * Samsung GameLauncher PWA website client
+     * @memberof XS.is
+     */
+    that.samsungGameLauncher = window.FRVRInstant?true:false ||
+      window.__FRVR.getQueryString("gamelauncher") == "" ||
+      window.__FRVR.getQueryString("source") == "gamelauncher"
+    /**
+     * Samsung Bixby website client
+     * @memberof XS.is
+     */
+    that.samsungBixby = window.__FRVR.getQueryString("samsung") == "" && !that.samsungGalaxyStorePWA;
+    /**
+     * Samsung browser website uk client
+     * @memberof XS.is
+     */
+    that.samsungBrowserUK = window.__FRVR.getQueryString("samsungbuk") == "";
+    /**
+     * Samsung browser website us client
+     * @memberof XS.is
+     */
+    that.samsungBrowserUS = window.__FRVR.getQueryString("samsungbus") == "";
+    /**
+     * Samsung browser website SEA client
+     * @memberof XS.is
+     */
+    that.samsungBrowserSEA = window.__FRVR.getQueryString("samsungbsea") == "";
+    /**
+     * Samsung browser website client
+     * @memberof XS.is
+     */
+    that.samsungBrowser = window.__FRVR.getQueryString("samsungbrowser") == "";
+    /**
+     * GL_Fallback
+     * @memberof XS.is
+     */
+    that.samsungGLFallback = window.__FRVR.getQueryString("gl_fallback") == "";
+    /**
+     * Samsung Instant Play
+     * @memberof XS.is
+     */
+    that.samsungInstantPlay = !!window.GSInstant;
+    /**
+     * Any Samsung
+     * @memberof XS.is
+     */
+    that.samsung = that.samsungGalaxyStorePWA||that.samsungGameLauncherPWA||that.samsungGameLauncher||that.samsungBixby||that.samsungBrowserUK||that.samsungBrowserUK||that.samsungBrowserUS||that.samsungBrowserSEA||that.samsungBrowser||that.samsungGLFallback||that.samsungInstantPlay
+    /**
+     * RCS
+     * @memberof XS.is
+     */
+    that.rcs = window.__FRVR.getQueryString("rcsid");
+    /**
+     * RCS
+     * @memberof XS.is
+     */
+    that.rcsKr = window.__FRVR.getQueryString("rcskr") == "";
+    /**
+     * Huawei Quick App
+     * @memberof XS.is
+     */
+    that.huaweiquickapp = window.__FRVR.getQueryString("huaweiquickapp") == "";
+    /**
+     * Huawei Any
+     * @memberof XS.is
+     */
+    that.huawei = window.__FRVR.getQueryString("huawei") == "" || that.huaweiquickapp;
+    /**
+     * Mozilla
+     * @memberof XS.is
+     */
+    that.mozilla = window.__FRVR.getQueryString("mozilla") == "";
+    /**
+     * miniclip
+     * @memberof XS.is
+     */
+    that.miniclip = window.__FRVR.getQueryString("miniclip") == "";
+    /**
+     * Chrome OS Device
+     * @memberof XS.is
+     */
+    that.chromeOSDevice = window.__FRVR.getQueryString("isChromeOSDevice") == "true";
+    /**
+     * True if we're running in Opera or Opera Mini
+     * @memberof XS.is
+     */
+    that.opera = (!!w.opr && !!w.opr.addons) || !!w.opera || u.indexOf(' OPR/') >= 0;
+    /**
+     * True if we're running in Yandex
+     * @memberof XS.is
+     */
+    that.yandex = !!window.YaGames
+    /**
+     * True if we're running in Firefox
+     * @memberof XS.is
+     */
+    that.firefox = w.InstallTrigger !== undefined;
+    /**
+     * True if we're running in edge 20+
+     * @memberof XS.is
+     */
+    that.edge = /(edge|edgios|edga)\/((\d+)?[\w\.]+)/i.test(u);
+    /**
+     * True for OPPO's Global H5 Platform
+     * @memberof XS.is
+     */
+    that.oppoGlobal = window.__FRVR.getQueryString("oppo") == "";
+    /**
+     * True for LG TV platform
+     * @memberof XS.is
+     */
+    that.lgtv = window.__FRVR.getQueryString("lgtv") == "";
+    /**
+     * True if running in Crazy Games
+     * @memberof XS.is
+     */
+    that.crazyGames = window.__FRVR.getQueryString("partnerid") == "8289067739";
+    /**
+     * True if running in Mynet
+     * @memberof XS.is
+     */
+    that.mynet = window.__FRVR.getQueryString("mynet") == "";
+    /**
+     * True if running in ufone
+     * @memberof XS.is
+    */
+    that.ufone = window.__FRVR.getQueryString("partnerid") == "8416254215";
+    /**
+     * True if running in game8 
+     * partner id 3566756403
+     * @memberof XS.is
+    */
+     that.game8 = window.__FRVR.getQueryString("game8") == "";
+     /**
+     * True if running in MailOnline 
+     * partner id 6794212012
+     * @memberof XS.is
+    */
+      that.mailonline = window.__FRVR.getQueryString("partnerid") == "6794212012";
+    /**
+     * True if true the native brige will not be load
+     * @memberof XS.is
+    */
+    that.disableNativeBridge = window.__FRVR.getQueryString("disableNativeBridge") == "";
+    /**
+     * True if we're inside the a Partner Android or iOS App wrapper
+     * @memberof XS.is
+    */
+    that.partnerWrapper = !that.disableNativeBridge && (that.mynet || that.tMobile || that.ufone || that.mailonline) && (that.iOS || that.android)
+    /**
+     * True if we're running in Rocket Chat (should be running alongside nosoc=1 query param)
+     * @memberof XS.is
+     */
+    that.rocketChat = window.__FRVR.getQueryString("rocketchat") == "";
+    /**
+     * True if we're running in Discord .
+     * This is not needed as we can just depend on buildTimePlatform but kept it here to be clearer; can remove in future
+     * @memberof XS.is
+     */
+    that.discord = window.__FRVR.buildTimePlatform === "discord";
+    /**
+     * is progressive web app enabled
+     * @memberof XS.is
+     */
+    that.progressiveWebAppEnabled = !that.chromeOSDevice && !that.iframed && !that.appWrapper && !that.twitch && !that.vkru && !that.okru && !that.facebookInstant && !that.partnerWrapper
+   })(window, navigator, navigator.userAgent, document.location);
+
+})()
+;
+
+         ;(function () {
+  var MAX_RETRY = 5;
+  var SCRIPT_VERSION = '2.0.0';
+  var PROTOCOL_VERSION = 5;
+  var PLAY_SESSION_TIMEOUT = 30 * 60 * 1000;
+  var END_POINT_PATH = '/coeus.frvr.com/v1/tm5';
+
+  var queue = [];
+  var sendTimer = null;
+  var sendEvent = function (eventFields) {
+    function dispatchOutstandingEvents() {
+      while (queue.length > 0) {
+        dispatchEvent(queue.shift());
+      }
+    }
+
+    queue.push(eventFields);
+    if (sendTimer) clearTimeout(sendTimer);
+    sendTimer = setTimeout(dispatchOutstandingEvents, 1);
+  };
+
+  var sendBeaconAvailable = navigator &&
+      (typeof navigator.sendBeacon === "function");
+
+  // Atleast 1 hit must have been send to
+  // endpoint with XHR or image before
+  // using beacons
+  var beaconCanBeUsed = false;
+
+  // Maps internal naming to telemetry protocol format version
+  // 5. (Reason is to minimize bytes sent for the common parameters
+  // transmitted from client to server)
+  var transportCompressionMap = {
+    protocol_version: 'f',
+    app_version: 'av',
+    engine_version: 'ev',
+    app_build: 'ab',
+    cohort: 'co',
+    channel: 'ch',
+    games_played: 'gp',
+    play_session_id: 'pi',
+    play_session_count: 'pc',
+    days_elapsed: 'de',
+    facebook_player_id: 'fi',
+    facebook_context_type: 'fc',
+    facebook_entrypoint: 'fe',
+    facebook_referral_player_id: 'fr',
+    utm_source: 'us',
+    utm_medium: 'um',
+    utm_campaign: 'uc',
+    utm_term: 'ut',
+    utm_content: 'uo',
+    remote_user_id: 'ru',
+    global_user_id: 'guid',
+    device_width: 'dw',
+    device_height: 'dh',
+    non_interaction: 'ni',
+    country: 'ct',
+    event: 'e',
+    game: 'g',
+    user: 'u',
+    client_time: 't',
+    value: 'v',
+    provider: 'ao',
+    ad_result: 'ar',
+    ad_response: 'ag',
+    ad_point: 'ap',
+    transport: 'tr',
+    web_url: 'wu',
+    retry: 'r',
+    label: 'l',
+    advertisement_id: 'ai',
+    script_version: 'xv',
+    cache_buster: 'n',
+    page_session_id: 'si'
+  }
+
+  // Local 'Storage' class, seems to be a curious abstraction for a
+  // javascript object.
+  var Storage = function () {
+    this.storage = localStorage || {};
+    this.setItem = function (key, value) {
+      this.storage[key] = value;
+    }
+    this.getItem = function (key) {
+      return this.storage[key];
+    }
+    this.getStorageType = function() {
+      return this.storage == localStorage ? 'localStorage' : 'in-memory';
+    }
+  }
+  var storage = new Storage();
+
+  function GUID(separator) {
+    var delim = separator || "-";
+    function S4() {
+      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    var st = ((new Date).getTime().toString(16)).slice(0, 11) +
+        (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1, 2);
+    return (S4() + S4() + delim + S4() + delim +
+            S4() + delim + S4() + delim + st);
+  }
+
+  var globalUserIdSource = 'cookie';
+
+  // FIXME: Overrides early-utils.js version with lots of duplicated
+  // code!  We should move this code to early-utils.js
+  window.__FRVR.globalUserId = function () {
+
+    function getTLD() {
+      var fallback = document.location.hostname;
+      var hostname = fallback.split('.');
+      for (var i = hostname.length - 1; i >= 0; i--) {
+        var host = hostname.slice(i).join('.');
+        document.cookie = 'get_tld=test;domain=.' + host + ';';
+        if (document.cookie.indexOf('get_tld') > -1) {
+          document.cookie = 'get_tld=;domain=.' + host +
+            ';expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+          return host;
+        }
+      }
+      return '';
+    }
+
+    var retval;
+    // Can we use cookies?
+    if(document && document.cookie) {
+      var cm = document.cookie.match('^(?:.*_frvr=([^;]*)).*$');
+      retval = (cm && cm[1]) || GUID();
+
+      // Now update it, so that the validity gets extended
+      var result = new Date();
+      result.setDate(result.getDate() + 730);
+      document.cookie = "_frvr=" + retval +
+        "; path=/; expires=" + new Date(result).toUTCString() +
+        "; domain=" + getTLD() + ";";
+      globalUserIdSource = 'cookie';
+    } else {
+
+      retval = storage.getItem('globalUserId');
+      if(!retval) {
+        retval = GUID();
+        storage.setItem('globalUserId', retval)
+      }
+      globalUserIdSource = storage.getStorageType();
+    }
+    return retval;
+  };
+
+  function sendData(sendMethod, data, retry) {
+    // IE doesn't support default parameters
+    retry = typeof retry !== 'undefined' ? retry : MAX_RETRY;
+
+    sendMethod(data, function () {
+
+      if (retry > 0) {
+
+        // retrying with exponential back-off (// 5 sec exponential increments)
+        var retryWait =
+            (Math.pow(2, (MAX_RETRY - retry)) + Math.random()) * 5000;
+        // Since fields are compresswed ealier "retry" needs to be
+        // mapped r manually
+        data.r = (MAX_RETRY - retry) + 1;
+        setTimeout(sendData.bind(undefined, sendMethod, data, --retry),
+                   retryWait); // partial application
+      }
+    })
+  }
+
+  function sendBeacon(path, data, callbackError) {
+
+    if (navigator.sendBeacon(path, JSON.stringify(data)))
+      return true;
+
+    callbackError();
+  }
+
+  function sendXHR(path, data, callbackError) {
+
+    var xobj = new XMLHttpRequest();
+
+    // Conditional for IE10
+    if (xobj.overrideMimeType) xobj.overrideMimeType("text/plain; charset=UTF-8");
+
+    // Try catch block for IE9
+    try {
+      xobj.open("POST", path + '?' + encodedQueryStringFromObject(data), true);
+      xobj.setRequestHeader("Content-type", "text/plain; charset=UTF-8");
+      xobj.withCredentials = true;
+      xobj.onreadystatechange = function () {
+        if (xobj.readyState == 4) {
+          var statusCode = xobj.status;
+          xobj = xobj.onreadystatechange = null;
+
+          statusCode = parseInt(statusCode)
+          if (statusCode != 200 && statusCode != 204) {
+            // Failure
+            callbackError();
+          } else {
+            beaconCanBeUsed = true;
+          }
+        }
+      }
+      xobj.send();
+    } catch (err) {
+      callbackError();
+    }
+  }
+
+  function sendPixel(path, data, callbackError) {
+
+    data.n = Math.random();
+
+    var o = document.createElement('img');
+    o.onload = function () {
+      beaconCanBeUsed = true;
+      o.onerror = o.onload = null;
+    }
+    o.onerror = function () {
+      callbackError();
+      o.onerror = null;
+    }
+    o.src = path + '?' + encodedQueryStringFromObject(data);
+    document.body.appendChild(o);
+  }
+
+  function getTransportMethod(path, context) {
+
+		// Prefer beacon when present
+		if (sendBeaconAvailable && beaconCanBeUsed) {
+      context.transport = 'bcn';
+      return sendBeacon.bind(undefined, path); // partial application
+    }
+
+    // When beacon send fails we default to XHR -> pixel
+    if (!!XMLHttpRequest) {
+      context.transport = 'xhr';
+      return sendXHR.bind(undefined, path); // partial application
+    }
+
+    context.transport = 'img';
+    return sendPixel.bind(undefined, path + '/i'); // partial application
+  }
+
+  function encodedQueryStringFromObject(context) {
+
+    var values = [];
+    for (var key in context) {
+      values.push(encodeURIComponent(key)
+                  + '=' + (typeof context[key] !== 'undefined'
+                           && context[key] != null
+                           ? encodeURIComponent(context[key]) : ''));
+    }
+    return values.join('&');
+  }
+
+  function compressContext(context) {
+    var compressedContext = {};
+    for (var key in context) {
+      typeof context[key] !== 'undefined' && context[key] != null
+        && (compressedContext[transportCompressionMap[key]
+                              || key] = context[key]);
+    }
+    return compressedContext;
+  }
+
+  function getPageSessionId() {
+
+    var pageSessionId = storage.getItem('pageSessionId');
+    if (!pageSessionId) {
+      pageSessionId = GUID();
+      storage.setItem('pageSessionId', pageSessionId);
+    }
+    return pageSessionId;
+  }
+
+  function getPlaySessionId() {
+
+    var playSessionId = storage.getItem('playSessionId');
+    if (playSessionId) {
+      var playSessionIdTimeStamp =
+          parseInt(storage.getItem('playSessionIdTimeStamp'));
+      if ((playSessionIdTimeStamp + PLAY_SESSION_TIMEOUT) < Date.now())
+        playSessionId = null; // Play session timeout
+    }
+    if (!playSessionId) {
+      playSessionId = GUID();
+      storage.setItem('playSessionId', playSessionId)
+    }
+    storage.setItem('playSessionIdTimeStamp', Date.now());
+    return playSessionId;
+  }
+
+  var extraFieldFunctions = [];
+
+  function dispatchEvent(fields) {
+
+    var overridingChannel = fields.channel;
+
+    var userId = window.__FRVR.globalUserId();
+    var pageSessionId = getPageSessionId();
+
+    for (var i = 0; i < extraFieldFunctions.length; i++) {
+      extraFieldFunctions[i](fields);
+    }
+
+    // Handle custom webviews etc.
+    var protocol = 'unknown://'
+    if(document && document.location && document.location.protocol){
+      protocol = document.location.protocol;
+    }
+    var web_url = undefined;
+    if(document && document.location && document.location.href) {
+      web_url = document.location.href;
+    }
+
+    // End point
+    var endpoint = [
+      protocol,
+      END_POINT_PATH,
+      fields.context || '_unspecified_',
+      userId
+    ].join('/');
+
+    // Payload
+    // TODO: Allow undefined app version/build
+    fields.app_version = fields.app_version || '0.0.0';
+    fields.app_build = fields.app_build || '000000';
+    fields.channel = overridingChannel || fields.channel;
+    fields.web_url = web_url;
+    fields.script_version = SCRIPT_VERSION;
+    fields.protocol_version = PROTOCOL_VERSION;
+    fields.page_session_id = fields.page_session_id || getPageSessionId();
+    fields.play_session_id = fields.play_session_id || null;
+    fields.cache_buster = Math.random();
+    fields.global_user_id = userId;
+    fields.global_user_id_source = globalUserIdSource;
+
+    // Platform specifics
+    fields.facebook_player_id = window.__FRVR.platformIs.facebookInstant
+      && FBInstant.player
+      && FBInstant.player.getID ? FBInstant.player.getID() : null;
+
+    var offsetMs = new Date().getTimezoneOffset() * 60 * 1000;
+    fields.client_time =
+      (new Date(Date.now() - offsetMs)).toISOString().slice(0, -1);
+
+    var transportMethod = getTransportMethod(endpoint, fields);
+    var compressedPayload = compressContext(fields);
+    sendData(transportMethod, compressedPayload);
+  }
+
+  exports = window.__FRVR.analytics = {};
+
+  exports.logEvent = function (event, eventFields) {
+    if (typeof event === 'object') {
+      eventFields = event;
+      event = '__unspecified';
+    }
+    eventFields = eventFields || {};
+    eventFields.event = event;
+    sendEvent(eventFields);
+  }
+
+  exports.logDiscoveryPageView = function (eventFields) {
+    eventFields = eventFields || {};
+    eventFields.event = 'discovery_page_view';
+    sendEvent(eventFields);
+  }
+
+  exports.logAdImpression = function (eventFields) {
+    eventFields = eventFields || {};
+    eventFields.event = 'ad_impression';
+    sendEvent(eventFields);
+  }
+
+  exports.getPageSessionId = getPageSessionId;
+  exports.getPlaySessionId = getPlaySessionId;
+  exports.compressContext = compressContext;
+  exports.extraFieldFunctions = extraFieldFunctions;
+})();
+;
+
+         ;(function () {
+  var experElem = document.getElementById('ab-experiment');
+  var experJSON = experElem && JSON.parse(experElem.innerHTML);
+
+  function selectCohort(chosen, reason) {
+    var chosenJs = JSON.parse(chosen.innerHTML);
+    chosenJs.cohortName = chosen.getAttribute('data-cohort-name');
+    chosenJs.cohortWeight = chosen.__weight;
+    chosenJs.cohortIdx = parseInt(chosen.getAttribute('data-cohort-idx'));
+    chosenJs.selectionReason = reason;
+    chosenJs.experiment = experJSON
+    window.__FRVR.cohort = function() {return chosenJs;}
+  }
+
+  // Choose cohort at run-time
+  var cohortElems = document.getElementsByClassName('cohort');
+  if (cohortElems.length === 1) return selectCohort(cohortElems[0], 'single');
+
+  // We got more than one, it's more complicated
+  var totalScore = 0;
+  var urlParams = URLSearchParams &&
+      new URLSearchParams(window.location.search);
+  var forceCohort = urlParams && urlParams.get('force-cohort');
+  for (var i = 0; i < cohortElems.length; i++) {
+    // Count this cohort's weight.
+    var weight = cohortElems[i].getAttribute('data-weight');
+    cohortElems[i].__weight = (weight && parseInt(weight)) || 100;
+
+    // Consult the force-cohort URL param.
+    var name = cohortElems[i].getAttribute('data-cohort-name');
+    if (forceCohort && name === forceCohort) {
+      window.keepurl = true;
+      return selectCohort(cohortElems[i], 'forced');
+    }
+
+    totalScore += cohortElems[i].__weight;
+  }
+
+  function djb2(str) {
+    // simple hash function:  google "djb2 hash"
+    for (var i = str.length-1, count = 5381; i; i--)
+      count = str.charCodeAt(i) + (count << 5) + count;
+    return count;
+  }
+
+  var id = experJSON.name + ':' + window.__FRVR.globalUserId()
+  var aleaJactaEst = Math.abs(djb2(id)) % totalScore;
+
+  for (var i = 0; i < cohortElems.length; i++) {
+    var ceil = cohortElems[i].__weight;
+    if (aleaJactaEst < ceil) {
+      return selectCohort(cohortElems[i], 'user-id-random');
+    } else aleaJactaEst -= ceil;
+  }
+})()
+;
+
+         ;(function () {
+  var __FRVR = window.__FRVR; // for brevity
+
+  // When in a FRVR game, gather more context
+  __FRVR.analytics.extraFieldFunctions.push(function(fields) {
+    fields.context = __FRVR.cohort().name || '_no_game_'
+    fields.app_build = __FRVR.cohort()["configJs"]["build"];
+    fields.app_version = __FRVR.cohort().version
+    fields.channel = __FRVR.getChannel();
+    fields.playSessionId = __FRVR.analytics.getPlaySessionId();
+  })
+
+  // Snitch home that we're loading the page
+  // nb. tracking is disabled for samsung-instant-play
+  if (!window.__FRVR.platformIs.samsungInstantPlay) {
+    __FRVR.analytics.logEvent('page_loading');
+  }
+})();
+;
+
+         // Deprecated direct accessors, avoid if possible
+         window.version             = window.__FRVR.cohort().version;
+         window.gameid              = window.__FRVR.cohort().name;
+         window.gaPath              = window.__FRVR.cohort().gaPath;
+         window.vpath               = window.__FRVR.cohort().vpath;
+         window.spath               = window.__FRVR.cohort().spath;
+         window.extsize             = window.__FRVR.cohort().jsSize;
+         window._jsonData           = window.__FRVR.cohort().moreJson;
+         window.LEGACY_COORD_SYSTEM = window.__FRVR.cohort().legacyCoords;
+
+         window.initTime            = window.__FRVR.startTime;
+
+         //In seperate code block to load first & not trigger when JS is disabled
+         var preloader = document.createElement('preloader');document.body.appendChild(preloader);
+
+         ;//ie9 polyfill
+if(!(window.console && console.log)) {
+  var fn = function(){};
+  console={log:fn,debug:fn,info:fn,warn:fn,error:fn};
+}
+;
+
+         ;Host = {
+  Localize:{
+
+      languages: window.__FRVR.cohort().supportedLanguages
+
+  },dataUrlsSupported:(function(){
+    var c = document.createElement("canvas");
+    return c.toDataURL&&(c.toDataURL("image/png").indexOf("data:image/png") == 0);
+  })()
+};
+// Local Variables:
+// mode: js
+// End:
+;
+
+         ;(function () {
+  // Implicit exports here:
+  //
+  // window.getNewCanvasObject = function()
+  // window.releaseCanvas = function(canvas)
+  // window.getJSGImageWrapper = function (path, actions, cords, drawCallback)
+  // window.embeddedFiles = {};
+  // window.embedFiles = function(files,data)
+  // window.embeddedAssets = {};
+  // window.loadAssets = function(files, svgCommands, data)
+  //
+  var relasedCanvasElements = []
+
+  window.getNewCanvasObject = function(){
+    var cachedElement = relasedCanvasElements.pop();
+    if(cachedElement) return cachedElement;
+    return document.createElement('canvas')
+  }
+  window.releaseCanvas = function(canvas){
+    canvas.getContext('2d').setTransform(1, 0, 0, 1, 0, 0);
+    canvas.width = canvas.height = 1
+    relasedCanvasElements.push(canvas)
+  }
+
+  function buildCharIndex(chars) {
+    var index = {};
+    for(var i = 0; i < chars.length; i++) index[chars[i]] = i;
+    return index;
+  }
+
+  var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/!#$&*-,.:;@()<=>?[]^`{|}";
+  var charIndex = buildCharIndex(chars);
+  var intChars = "()<=>?[]^`{|}";
+  var intCharIndex = buildCharIndex(intChars);
+
+  window.getJSGImageWrapper = function getJSGImageWrapper(path, actions, cords, drawCallback) {
+
+    function getCord() {
+      var first = cords[cordOffset++];
+      var res, intChar;
+      switch(first) {
+      case '_': res = 0; break;
+      case '~': res = 1; break;
+      case '%': res = 149932; break;
+      case '\'': res = -149932; break;
+      case '@':
+        res =
+          charIndex[cords[cordOffset++]]
+          + charIndex[cords[cordOffset++]] * 74
+          + charIndex[cords[cordOffset++]] * 5476 // (74 * 74)
+          + charIndex[cords[cordOffset++]] * 405224; // (74 * 74 * 74)
+        res = (res / 100) - 149932;
+        break;
+      default:
+        intChar = intCharIndex[first];
+        if(intChar !== undefined) {
+          res = intChar * 88 + charIndex[cords[cordOffset++]];
+        } else {
+          res =
+            charIndex[first]
+            + charIndex[cords[cordOffset++]] * 74
+            + charIndex[cords[cordOffset++]] * 5476; // (74 * 74)
+          res = (res / 100) - 2026;
+        }
+      }
+      return res;
+    }
+    function getColor() {
+      return getCord()
+        ? 'rgb(' + getCord() + ',' + getCord() + ',' + getCord() + ')'
+        : 'rgba(' + getCord() + ',' + getCord() + ',' + getCord() + ',' + getCord() + ')';
+    }
+    function toCanvas(canvas, scale) {
+      canvas.width = Math.ceil(assetWidth * scale);
+      canvas.height = Math.ceil(assetHeight * scale);
+      var ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+      var canvasStack = [canvas];
+      var fillObject;
+      try {
+        for(var a = 0; a < actions.length; a++) {
+          switch(actions[a]) {
+          case '4':
+            var newCanvas = getNewCanvasObject();
+            newCanvas.width = getCord();
+            newCanvas.height = getCord();
+            ctx = newCanvas.getContext('2d');
+            canvasStack.push(newCanvas);
+            break;
+          case 'b':
+            var pattern = ctx.createPattern(ctx.canvas, 'no-repeat');
+            var removed = canvasStack.pop();
+            releaseCanvas(removed);
+            ctx = canvasStack[canvasStack.length - 1].getContext('2d');
+            ctx.fillStyle = pattern;
+            break;
+          case 't': fillObject = ctx.createLinearGradient(getCord(), getCord(), getCord(), getCord()); break;
+          case 'D': fillObject = ctx.createRadialGradient(getCord(), getCord(), getCord(), getCord(), getCord(), getCord()); break;
+          case '8': fillObject.addColorStop(getCord(), getColor()); break;
+          case 'F': ctx.fillStyle = fillObject; break;
+          case 'f': ctx.save(); break;
+          case '/': ctx.bezierCurveTo(getCord(), getCord(), getCord(), getCord(), getCord(), getCord()); break;
+          case 'p': ctx.strokeStyle = getColor(); break;
+          case 'w': ctx.lineCap = 'butt'; break;
+          case 'y': ctx.lineJoin = 'miter'; break;
+          case '9': ctx.miterLimit = getCord(); break;
+          case '6': ctx.fillStyle = getColor(); break;
+          case 'n': ctx.beginPath(); break;
+          case 'q': ctx.closePath(); break;
+          case 'o': ctx.fill(); break;
+          case 'P': ctx.stroke(); break;
+          case 'r': ctx.restore(); break;
+          case '2': ctx.arc(getCord(), getCord(), getCord(), getCord(), getCord(), getCord() === 1); break;
+          case 'm': ctx.moveTo(getCord(),getCord()); break;
+          case 'l': ctx.lineTo(getCord(),getCord()); break;
+          case '5': ctx.quadraticCurveTo(getCord(), getCord(), getCord(), getCord()); break;
+          case 'C': ctx.clip(); break;
+          case 'E': ctx.lineWidth = getCord(); break;
+          case 'A': ctx.transform(getCord(), getCord(), getCord(), getCord(), getCord(), getCord()); break;
+          case 'u': ctx.translate(getCord(), getCord()); break;
+          case 'V': ctx.scale(getCord(), getCord()); break;
+          case '0': ctx.rotate(getCord()); break;
+          case 'K': ctx.globalAlpha = getCord(); break;
+          case 'G': ctx.strokeStyle = fillObject; break;
+          default: console.error('unhandled', actions[a]);
+          }
+        }
+      } catch(err) {
+        window.onerror && window.onerror('Draw failure in > ' + path + ' ' + err.message, err.sourceURL, err.line);
+      }
+      // Reset JSG drawing
+      cordOffset = 0;
+      getCord();
+      getCord();
+      return canvas;
+    }
+
+    function handleDraw(config) {
+      config = config || {};
+      var scale = config.scale || 1;
+      var forceCanvas = config.forceCanvas || false;
+      //var instantDraw = config.instantDraw || false; // Check if we need this
+      var jsgImage;
+      function handleCallback() {
+        jsgImage.onload = null;
+        jsgImage.onerror = null;
+        drawCallback && drawCallback()
+        drawCallback = null;
+      }
+      function loadNext() {
+        var jsgCanvas = toCanvas(getNewCanvasObject(), scale);
+        if(typeof drawCallback === 'function') {
+          jsgImage.onload = handleCallback;
+          jsgImage.onerror = handleCallback;
+        }
+        jsgImage.src = jsgCanvas.toDataURL(); // TODO: Investigate performance impact here
+        releaseCanvas(jsgCanvas);
+      }
+      if(Host.dataUrlsSupported && !forceCanvas) {
+        jsgImage = new Image();
+        loadNext();
+        return jsgImage;
+      } else {
+        var jsgCanvas = toCanvas(getNewCanvasObject(), scale);
+        jsgCanvas.isCanvas = true;
+        drawCallback && drawCallback()
+        drawCallback = null
+        return jsgCanvas;
+      }
+    }
+
+    var cordOffset = 0;
+    var assetWidth = getCord();
+    var assetHeight = getCord();
+    var jsgWrapper = {
+      isJSG: true,
+      path: path,
+      width: assetWidth,
+      height: assetHeight,
+      actions: actions,
+      cords: cords,
+      draw: handleDraw
+    };
+
+    return jsgWrapper;
+  };
+
+  // Embed general data - this is used by builder.rb's embed_data_content
+  //   files: Array of filenames
+  //   data : Array of data that mapes to filenames
+  window.embeddedFiles = {};
+  window.embedFiles = function(files,data) {
+    for( var a=0;a<files.length;a++){
+      var d = data[a]
+      window.embeddedFiles[files[a]] = d;
+    }
+  }
+
+  // Embed image data.  A mapping of
+  // {string} logical asset path => {string} png-base64-data |
+  //                                {array[2]} svg-commands-and-data
+  window.embeddedAssets = {};
+
+  // Only legacy builder.rb uses this.  The new build system builds
+  // embeddedAssets directly.
+  window.loadAssets = function(files, svgCommands, data){
+    for( var a=0;a<files.length;a++){
+      var path = files[a]
+      var svgCmds = svgCommands[a];
+      if(svgCmds){
+        window.embeddedAssets[path] = [svgCmds,data[a]];
+      }else{
+        window.embeddedAssets[path] = data[a];
+      }
+    }
+  }
+})()
+;
+
+         ;(function () {
+  // implicit exports here:
+  //
+  //  window.htmlclean
+  //  window.htmlprogress,
+  //  window.__FRVR.platformSpecificProgress
+  //  window.__FRVR.platformSpecificCleanup
+  //
+  var completed = 0;
+
+  window.htmlprogress = function(total, left){
+    completed = Math.max((left / total), completed)
+  }
+
+  var preview = 0;
+
+  var timer = setInterval(function(){
+    if(completed < .5){
+      completed += (.5-completed)/100
+    }
+    preview += (completed-preview)/10
+    window.__FRVR.platformSpecificProgress &&
+      window.__FRVR.platformSpecificProgress(preview);
+  },50)
+
+  setTimeout(function(){
+    loadbar&&(loadbar.style.display = "block")
+  },500)
+
+  window.htmlclean = function() {
+    window.__FRVR.gameIsLoaded = true;
+
+    // Remove the preloader
+    if(preloader){
+      preloader.parentNode&&preloader.parentNode.removeChild(preloader)
+    }
+
+    // Stop the progress bar timer
+    clearInterval(timer)
+
+    window.__FRVR.platformSpecificCleanup &&
+      window.__FRVR.platformSpecificCleanup();
+  }
+})()
+;
+
+         ;// TODO: put some build-time conditionals here?
+var canvas, loadbar, progressbar, logoOptions = {forceCanvas: true};
+if(!window.FBInstant && !window.GSInstant) {
+  var logoA="6nmllllllllllmlllllllllllm/l//llll/lmlll/m/l//llll/lmlll/o6nm/l2mo6nm//l22mot88Fnm//l//mo6nm/lll/mot88Fnm/l//o6nm/ll/lmo6nm/o"
+  var logoC="|q|T~(a(a(a_^L_|P(5|P(5{F)>{F)>`o(5`o(5^!<W^!<W^K_^L]&^K[`{g[^{g[N^K?n^K?o^L?n^L[z|P]c|P^o^L^o^K]&^K?Z{x?E{8>@{3>4{l>h{L>``}?O`-?S`N?V](=5^N<-^L<-|P=n|P=n{P=2{P>D{7>x|v?f|I?Z{x>L`x=n`x=n^!>K^!>6^+>6`z>L`x|k{x|P{8{{{3{&{l{s{L|H`}|Y`-|d`N|g](`*^N^?^L^?|P`y|P`y{P`!{P{O{7{7|v|q|I|k{x{V`x`y`x`y^!{V^!{-^+{-`z{V`x~<><X_|o=i|o?h`+[|]![$|D)-^HEkq=hM;k+;k_[/<t~<>)+(D[+<u]2)T`2),`6=i`6=6`1=]`q>O|E),uCzx7p<1P;kE;k~,!x:nq=oE;k/.k~[/<t`T[$?U<tmAl~<>)+(DEBl~<O(j(T`j>Y^??A]=?T]M>9[9>f[o=;[K=i?D>|?X?m?.?[?.?[[d[i[<[4]#[$[/<t~<>_(p[/<u?p>N>/[4<N[I=^=i?D).?M)4?@(w]GY8k^g~[/<t<j(![X=icAl~)&_<>6Al~)I(i)9?E).>4)Z>I(<=o(!)`<[<U<m<<<Y=e<1=1<-=*=L=`=i~)&_<>=2=><<>^)f=|){<=)^<[(v?B([?v)t?^<O[I=2=>[/<t~_<N<>=p(!)B(Ucmj=A(w?C"
+  var darkMode = location.search.indexOf("theme=light") == -1 && (
+    location.search.indexOf("theme=dark") != -1 || (
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ))
+  if (darkMode && preloader.classList && preloader.classList.add) {
+    preloader.classList.add('dark')
+    logoC=logoC.replace("(a(a(a", "<><><>")
+  }
+  canvas = getJSGImageWrapper('logo',logoA, logoC).draw(logoOptions);
+  loadbar = document.createElement('loadbar');
+  progressbar = document.createElement('div');
+  preloader.appendChild(loadbar);
+  loadbar.appendChild(progressbar);
+  preloader.appendChild(canvas);
+}
+
+var ow = 0
+var oh = 0
+function handleResize(){
+  // FIXME: A noop on FBInstant and GSInstant, so we should
+  // rework this so we just don't call it just don't call it
+  // in those scenarios
+  if(!!!window.FBInstant && !window.GSInstant){
+    var w = document.documentElement.clientWidth;
+    var h = Math.min(window.innerHeight,document.documentElement.clientHeight);
+    if(ow!=w||oh!=h){
+      ow = w;oh = h;
+      var s = Math.min(w,h)*.6>>0
+      var nh = s*0.978260869>>0
+      var t = ((h-nh*1.15)/2>>0)
+
+      loadbar.style.width = canvas.style.width = s+"px"
+      canvas.style.height = nh +"px"
+      loadbar.style.left = canvas.style.left = ((w-s)/2>>0)+"px"
+      canvas.style.top = t+"px"
+      loadbar.style.height = ((s/40)>>0)+ "px"
+      loadbar.style.top = (t + nh*1.15)+"px"
+    }
+  }
+}
+handleResize()
+
+window.__FRVR.platformSpecificProgress = function (preview) {
+  progressbar&&(progressbar.style.width = (preview*100>>0) + "%")
+  handleResize();
+}
+
+window.__FRVR.platformSpecificCleanup = function () {
+  // Dealloc the canvas
+  if(canvas){
+    canvas.width = canvas.height = 1
+  }
+
+  // Garbage collection
+  loadbar = progressbar = canvas = preloader = null;
+}
+;
+
+         ;(function () {
+  var req = new XMLHttpRequest();
+  req.addEventListener('load', function(event){
+    var s = document.createElement("script");
+    s.setAttribute('spath', window.spath);
+    //s.text rather than innerHTML for ie9
+    s.text = event.target.responseText;
+    document.documentElement.appendChild(s);
+  })
+
+  req.addEventListener("progress", function(event) {
+    if (event.lengthComputable) {
+      window.htmlprogress(event.total, event.loaded*.7)
+    } else {
+      window.htmlprogress(window.extsize||500000, event.loaded)
+    }
+  }, false);
+
+  if(window.spath !== undefined){
+    req.open("GET", spath);
+    req.send()
+  }
+})()
+;
+
+        </script>
+
+      <canvas id="gameCanvas"></canvas>
+      <script>
+       var cs = document.getElementById('gameCanvas').style;
+       cs.width = cs.height = "100%"
+      </script>
+
+        <div id="overlay"></div>
+
+      <content itemscope="" itemtype="https://schema.org/VideoGame">
+  <h1 itemprop="name">Gold Digger</h1>
+  <meta itemprop="url" content="https://golddigger.frvr.com/">
+  <div itemprop="author" itemscope itemtype="http://schema.org/Organization">
+    <p style="margin-top:0px"><span itemprop="name"><a itemprop="url" href="http://frvr.com/">By FRVR</a></span></p>
+  </div>
+
+  <metadata>
+    <!--<img itemprop="image" src="" data-original="./v/1636996438040/i/web/icon196x196.png"/>-->
+    <meta itemprop="playMode" content="SinglePlayer">
+    <p>Genre: <span itemprop="genre"></span></p>
+    <div itemscope itemtype="http://schema.org/AggregateRating" itemprop="aggregateRating">
+      <div>Average Rating: <b itemprop="ratingValue">4.8</b>/<b itemprop="bestRating">5</b></div>
+      <meta itemprop="reviewCount" content="9427">
+    </div>
+    <link itemprop="applicationCategory" content="Game">
+    <link itemprop="applicationSubCategory" content="Board, Puzzle">
+    <span itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
+      <meta itemprop="price" content="$0">
+      <meta itemprop="priceCurrency" content="USD">
+      <link itemprop="availability" href="http://schema.org/InStock">
+    </span>
+    <meta itemprop="contentRating" content="Everyone">
+    <meta itemprop="playMode" content="SinglePlayer">
+  </metadata>
+
+  <p>Gold Digger FRVR is the best digging game, for both gold rush veterans and mining fans. Take your pickaxe and your helmet and start drilling!</p>
+<p>Let’s dig day and night, let’s find tons of gold and some treasures, let’s put them on the ground and make some money! But aware of the giant rocks, make smart use of your pickaxe and dig wisely, otherwise they will fall on you and you'll lose all the gold! Instead of that, try to connect three or more rocks to blast them and get even more gold!</p>
+<p>Explore every corner of the cave and do not leave a stone unexcavated. Who knows what could you find in the depths of a gold mine? Dig up ancient dinosaurs bones, valuable gold nuggets of even shiny diamonds. No rock can stop you from your mining mission! Be careful of underground explosions and use the checkpoint base to save your progress.</p>
+Start mining and fill your bag with gold and diamonds in the best free digging game ever! Can you become the speleology tycoon?
+  <p><a href=".">Please enable JavaScript to play now!</a></p>
+
+  <ul>
+
+  </ul>
+  <h2>More platforms</h2>
+  <ul>
+
+  </ul>
+</content>
+
+      <script>
+       ;(function () {
+  function parseStack(err) {
+    var stack = [];
+    var lines = (err && err.stack || '').split('\n'); // split stack trace into lines
+    lines.shift(); // remove first line, the error message
+    for(var i = 0; i < lines.length; i++) {
+      // simplyfy and shorten details
+      stack.push(lines[i]
+                 .replace(/^\s*at\s+/g, '')
+                 .replace(/(https?:\/\/[^\/]+)?/g, '')
+                 .replace(/https?:\/\/[^\/]+/g, '')
+                 .replace(/\/?game\/[^\/]+\/[^\/]+/g, '')
+                 .replace(/:?<anonymous>:?/g, '')
+                 .replace(/^([^ ]+)\s+\(/g, '$1(')
+                 .replace(/^([0-9]+:[0-9]+$)/g, '($1)')
+                );
+    }
+    return stack;
+  }
+  function catchAndSnitch(errorType) {
+    return function(errorMsg, sourceURL, line, column, err) {
+      if(sourceURL instanceof Error) { // Enable optional parameters
+        err = sourceURL;
+        sourceURL = undefined;
+      }
+      var configJs = window.__FRVR.cohort().configJs;
+      err = err || new Error(errorMsg);
+      var parts = ((err.stack || '').split('\n')[1] || '').split(':');
+      var colFromStack = parts.pop() || undefined;
+      var lineFromStack = parts.pop() || undefined;
+      line = line || err.lineNumber || err.lineno || err.line || lineFromStack || '';
+      column = column || err.columnNumber || err.colno || err.column || colFromStack || '';
+      sourceURL = sourceURL || err.sourceURL || '';
+      errorMsg = errorMsg || err.message || (err.toString && err.toString()) || '';
+      var parsedStack = parseStack(err) || [];
+      var errSrc = sourceURL + ': ' + line + ': ' + column;
+      window.Host && Host.Log && Host.Log(errorType + ' Error: ' + errorMsg + ': ' + errSrc + '\nStack: ' + parsedStack.join('\n'));
+      console.error(errorType + ' Error', errorMsg + ': ' + errSrc, err);
+      errSrc += ': ' + parsedStack.join('|').substr(0, 150);
+      var eventCategory = configJs['id'] + ' ' +
+          configJs['version'] + ' ' +
+          configJs['build'] + ' ' +
+          errorType + ' Error';
+      var errTime = Date.now() - (window.__FRVR.startTime || 0);
+      if(window.gax) {
+        gax('send', 'event', eventCategory, errorMsg, errSrc, errTime);
+        gax('send', 'exception', {exDescription: eventCategory + ': ' + errorMsg + ': ' + errSrc});
+      }
+      if(typeof FBInstant !== 'undefined' && typeof FBInstant.logEvent === 'function') {
+        FBInstant.logEvent('onerror', errTime, {
+          appName: configJs['id'],
+          appVersion: configJs['version'],
+          appBuild: configJs['build'],
+          category: eventCategory,
+          message: errorMsg,
+          stack: errSrc
+        });
+      }
+    };
+  }
+  window.onerror = catchAndSnitch('JavaScript');
+  window.__FRVR.createErrorHandler = catchAndSnitch;
+  var promiseErrorHandler = catchAndSnitch('Promise');
+  window.onunhandledrejection = function(rejection) {
+    var err = (rejection && rejection.reason) || {};
+    promiseErrorHandler(undefined, undefined, undefined, undefined, err);
+  };
+})()
+;
+
+       ;(function () {
+  var configJs = window.__FRVR.cohort().configJs;
+
+  // Stub these two early, since they will be called even in systems
+  // without regular Google Analytics support such as Android.
+  // However window.ga will have to be unstubbed just in time before
+  // the regular Google Analytics snippet.
+  window.ga = function() {
+    console.warn('Stubbed ga() being called:', arguments)
+  };
+  window.gax = function() {
+    console.warn('Stubbed gax() being called;', arguments)
+  };
+
+  window.gaAppInfo = {
+    appId: 'com.frvr.'+ configJs['id'],
+    appName: configJs['id'],
+    appVersion: configJs['version'],
+  };
+})()
+;
+
+       ;
+
+       ;(function () {
+  ga(function() {
+    setTimeout(function(){
+      if (!window.keepurl && !(window.XS && XS.is.oppoGlobal)) {
+        window.location.hash = ""
+        if (window.history &&
+            window.history.replaceState instanceof Function
+           ) {
+          window.history.replaceState({}, document.title,'./');
+        }
+      }
+    },5000)
+  })})()
+;
+
+      </script>
+
+      <script>
+
+      </script>
+
+    <script>
+     ;(function() {
+	function Scitylana(tracker, config) {
+		var sciUAs = [], uasInited = false;
+		var reAmp = /^&|&$/ig, reTid = /&tid=([^&]+)&/;
+		var orgSendHitTask = tracker.get('sendHitTask');
+
+		function sciData(tracker) {
+			var time = (new Date).getTime();
+			var _sl_order = window._sl_order;
+			if(_sl_order >= time) _sl_order++;
+			else _sl_order = time;
+			window._sl_order = _sl_order;
+			var hasReferrer = !document.referrer ? 0 : 1;
+			var userId = tracker.get('userId') || tracker.get('clientId');
+			return 'sl=1&u=' + userId + '&t=' + _sl_order + '&r=' + hasReferrer;
+		}
+
+		function initUAs() {
+			for(var xsIs in config){
+				var sciUa = config[xsIs];
+				if((xsIs === 'any' || ((typeof XS !== 'undefined') && XS.is[xsIs])) && sciUAs.indexOf(sciUa) === -1) sciUAs.push(sciUa);
+			}
+			if((typeof XS !== 'undefined') && XS.is) uasInited = true;
+		}
+
+		function sendHitTask(model) {
+			orgSendHitTask(model);
+			if(!uasInited) initUAs();
+			var hitPayload = model.get('hitPayload') + '&cd1=' + encodeURIComponent(sciData(tracker));
+			for(var i = 0; i < sciUAs.length; i++) {
+				model.set('hitPayload', ('&' + hitPayload + '&').replace(reTid, '&tid=' + sciUAs[i] + '&').replace(reAmp, ''), true);
+				orgSendHitTask(model);
+			}
+		}
+
+		tracker.set('sendHitTask', sendHitTask);
+	}
+	var _jsonData = window._jsonData || {};
+	if(_jsonData.scitylana) {
+		ga('provide', 'scitylana', Scitylana);
+		ga('require', 'scitylana', _jsonData.scitylana);
+	}
+})();
+;
+
+     window.initGoogle();
+    </script>
+
+    <span id='inline-checksum' data-checksum="a1ff228a78136c91eb06e9c4a308a202"></span>
+  </body>
+</html>
