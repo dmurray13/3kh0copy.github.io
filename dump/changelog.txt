@@ -10,6 +10,11 @@ Here is where I will post updates on when a new game is added or something chang
 NOTE: Make sure you refresh the page! Sometimes you will not get the lastest update!
 
 ------------------------------------------------------------
+Mar, 12
+Long time no see! Here are some amazing updates!
++ Added Wordle
+------------------------------------------------------------
+Mar, 8
 + Added TAB CLOAK!!! --> https://3kh0.github.io/dump/tab-cloak.html
 + Added a better minesweeper (thx u4pak!)
 + Added BitLife
