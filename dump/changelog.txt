@@ -14,6 +14,7 @@ Mar, 12
 Long time no see! Here are some amazing updates!
 + Added Wordle
 + Added Madalin Stunt Cars 2
++ Added Ducklife 🐧
 ------------------------------------------------------------
 Mar, 8
 + Added TAB CLOAK!!! --> https://3kh0.github.io/dump/tab-cloak.html
@@ -27,7 +28,7 @@ Mar, 8
 ------------------------------------------------------------
 Mar, 2
 + Added Vex 6
-+ Added Edge not found
++ Added Edge not found 🐧
 ------------------------------------------------------------
 Mar, 1
 + Added back comment box! (please do not abuse it)
@@ -52,12 +53,12 @@ Feb, 23
 ------------------------------------------------------------
 Feb, 22
 Happy TWOsday! Haha
-+ Added Vex 4 (thx Piplup! :) again)
++ Added Vex 4 🐧
 + Added Vex 3
 ^ Add back tetris icon for project menu (thx u4pak!)
 ------------------------------------------------------------
 Feb, 21
-+ Added Cut the rope (thx Piplup! :)
++ Added Cut the rope 🐧
 + Added Cut the rope: Time Travel
 + Added Zombs Royale
 + Added Vex 5
