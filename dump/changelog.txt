@@ -13,6 +13,7 @@ NOTE: Make sure you refresh the page! Sometimes you will not get the lastest upd
 Mar, 12
 Long time no see! Here are some amazing updates!
 + Added Wordle
++ Added Madalin Stunt Cars 2
 ------------------------------------------------------------
 Mar, 8
 + Added TAB CLOAK!!! --> https://3kh0.github.io/dump/tab-cloak.html
