@@ -17,6 +17,7 @@ Thank you u4pak and Piplup7575 for joining the team! Updates will come sooner no
 + Scrap Metal 3
 ^ Changed so that the title of the projects is white instead of black *it looks better*
 ^ Made it so wordle can be installed as a PWA
+^ Remade Google Snake to a way better version *pretty much the real thing!*
 ------------------------------------------------------------
 Mar, 12
 Long time no see! Here are some amazing updates!
