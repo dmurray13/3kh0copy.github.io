@@ -10,6 +10,12 @@ Here is where I will post updates on when a new game is added or something chang
 NOTE: Make sure you refresh the page! Sometimes you will not get the lastest update!
 
 ------------------------------------------------------------
+Mar, 13
+Thank you u4pak and Piplup7575 for joining the team! Updates will come sooner now that we have 3 people working!
++ Added SUPERHOT
+^ Changed so that the title of the projects is white instead of black *it looks better*
+^ Made it so wordle can be installed as a PWA
+------------------------------------------------------------
 Mar, 12
 Long time no see! Here are some amazing updates!
 + Added Wordle
