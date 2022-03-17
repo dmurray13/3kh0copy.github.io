@@ -10,6 +10,10 @@ Here is where I will post updates on when a new game is added or something chang
 NOTE: Make sure you refresh the page! Sometimes you will not get the lastest update!
 
 ------------------------------------------------------------
+Mar, 17
++ Added The Lost Ball 🐧
+^ Fixed glitch with Moto X3M not loading the world on level 15 🐧
+------------------------------------------------------------
 Mar, 15
 Just quick little note, I will be going to the beach tomarrow so expect updates to be delayed.
 + Added Soldier Legend
