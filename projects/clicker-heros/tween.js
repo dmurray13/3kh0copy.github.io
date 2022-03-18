@@ -1,3 +1,4 @@
+// 3kh0.github.io - TWEEN.Tween.prototype.to
 var _Group=function(){this._tweens={};this._tweensAddedDuringUpdate={};};_Group.prototype={getAll:function(){return Object.keys(this._tweens).map(function(tweenId){return this._tweens[tweenId];}.bind(this));},removeAll:function(){this._tweens={};},add:function(tween){this._tweens[tween.getId()]=tween;this._tweensAddedDuringUpdate[tween.getId()]=tween;},remove:function(tween){delete this._tweens[tween.getId()];delete this._tweensAddedDuringUpdate[tween.getId()];},update:function(time,preserve){var tweenIds=Object.keys(this._tweens);if(tweenIds.length===0){return false;}
 time=time!==undefined?time:TWEEN.now();while(tweenIds.length>0){this._tweensAddedDuringUpdate={};for(var i=0;i<tweenIds.length;i++){var tween=this._tweens[tweenIds[i]];if(tween&&tween.update(time)===false){tween._isPlaying=false;tween.isPlaying=false;if(!preserve){delete this._tweens[tweenIds[i]];}}}
 tweenIds=Object.keys(this._tweensAddedDuringUpdate);}
