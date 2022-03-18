@@ -1,32 +1,73 @@
----
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: '🐜 Bug'
-assignees: ''
-
----
-
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-Please add any screenshots to help explain your problem.
-
-**System information**
-
-Operating system (eg ChromeOS or Windows):
-Browser:
-
-**Additional context**
-Add any other context about the problem here.
+description: Create a report to help us improve our website!
+title: '[Bug] '
+labels: ["🐜 Bug"]
+body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Check these boxes to make sure you did everything right!
+      description: Just click on the box to check it off!
+      options:
+        - label: I have made sure that this issue does not already exist
+          validations:
+            required: true
+        - label: I have submitted screenshots of the error
+          validations:
+            required: true
+        - label: >-
+            You are not using the website on any clones (you are using
+            3kh0.github.io and nothing else)
+          validations:
+            required: true
+        - label: I just checked all of these boxes without reading the labels
+          validations:
+            required: false
+  - type: dropdown
+    attributes:
+      label: What browser are you using?
+      description: Use the dropdown to select which browser you are using
+      options:
+        - Google Chrome
+        - Mozilla Firefox
+        - Microsoft Edge
+        - Apple Safari
+        - Other
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: If you said other above, please specify which browser you use
+      description: >-
+        THIS IS NOT REQUIRED! Only put something in here if you said other in
+        the dropdown above!
+      placeholder: Amazon Silk
+  - type: dropdown
+    attributes:
+      label: What device are you using?
+      description: Use the dropdown to select which device you are using
+      options:
+        - Chromebook
+        - iPad
+        - Windows Laptop (or any device running Windows)
+        - Macbook (or any device running macOS)
+        - iPhone
+        - Other (please note in text field below)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: If you said other above, please specify which device you use
+      description: >-
+        THIS IS NOT REQUIRED! Only put something in here if you said other in
+        the dropdown above!
+      placeholder: Samsung SmartTV
+  - type: textarea
+    attributes:
+      label: Please explain the issue
+      description: >-
+        What is the issue? Be sure to inclue screenshots and/or console logs (if
+        you can). If you have anything else to say, please do that here aswell!
+      placeholder: Please type here...
+    validations:
+      required: true
