@@ -59,4 +59,4 @@ body:
       required: true
   - type: markdown
     attributes:
-      value: This template was generated with [Issue Forms Creator](https://www.issue-forms-creator.app/)
+      value: Thank you for submitting a issue! We will try and tackle it as soon as possible!
