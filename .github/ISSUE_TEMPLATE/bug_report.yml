@@ -10,19 +10,13 @@ body:
       description: Just click on the box to check it off!
       options:
         - label: I have made sure that this issue does not already exist
-          validations:
-            required: true
+          required: true
         - label: I have submitted screenshots of the error
-          validations:
-            required: true
-        - label: >-
-            You are not using the website on any clones (you are using
-            3kh0.github.io and nothing else)
-          validations:
-            required: true
+          required: true
+        - label: You are not using the website on any clones (you are using 3kh0.github.io and nothing else)
+          required: true
         - label: I just checked all of these boxes without reading the labels
-          validations:
-            required: false
+          required: false
   - type: dropdown
     attributes:
       label: What browser are you using?
@@ -38,9 +32,7 @@ body:
   - type: input
     attributes:
       label: If you said other above, please specify which browser you use
-      description: >-
-        THIS IS NOT REQUIRED! Only put something in here if you said other in
-        the dropdown above!
+      description: THIS IS NOT REQUIRED! Only put something in here if you said other in the dropdown above!
       placeholder: Amazon Silk
   - type: dropdown
     attributes:
@@ -53,26 +45,20 @@ body:
         - Macbook (or any device running macOS)
         - iPhone
         - Other (please note in text field below)
-    validations:
-      required: true
+      validations:
+        required: true
   - type: input
     attributes:
       label: If you said other above, please specify which device you use
-      description: >-
-        THIS IS NOT REQUIRED! Only put something in here if you said other in
-        the dropdown above!
+      description: THIS IS NOT REQUIRED! Only put something in here if you said other in the dropdown above!
       placeholder: Samsung SmartTV
   - type: textarea
     attributes:
       label: Please explain the issue
-      description: >-
-        What is the issue? Be sure to inclue screenshots and/or console logs (if
-        you can). If you have anything else to say, please do that here aswell!
+      description: What is the issue? Be sure to inclue screenshots and/or console logs (if you can). If you have anything else to say please do that here aswell!
       placeholder: Please type here...
     validations:
       required: true
   - type: markdown
     attributes:
-      value: >-
-        This template was generated with [Issue Forms
-        Creator](https://www.issue-forms-creator.app/)
+      value: This template was generated with [Issue Forms Creator](https://www.issue-forms-creator.app/)
