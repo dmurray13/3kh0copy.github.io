@@ -1,6 +1,7 @@
 name: Feature Request
 description: Have a idea you want to add? Know a game that you want to see on this site?
 title: Feature Request
+labels: ✨ Enhancement
 body:
   - type: dropdown
     attributes:
