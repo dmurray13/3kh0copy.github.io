@@ -16,7 +16,8 @@ You can clone this repo with this handy URL:
 ```
 https://github.com/3kh0/3kh0.github.io.git
 ```
-[![Remix on Glitch](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/glitch.svg)](https://glitch.com/edit/#!/import/github.com/3kh0/3kh0.github.io)
+[![Run on Replit](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/replit.svg)](https://replit.com/github/3kh0/3kh0.github.io)
+[![Remix on Glitch](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/glitch.svg)](https://glitch.com/edit/#!/import/github/3kh0/3kh0.github.io)
 
 or, [download the repo](https://github.com/3kh0/3kh0.github.io/archive/refs/heads/main.zip)
 
