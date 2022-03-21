@@ -14,6 +14,7 @@ Mar, 21
 + Added Deal or No Deal (flash game, thank ruffle!)
 + Added ability to deploy using Glitch.com or Replit (Check main Readme.md file) 🐧
 ^ Remove replit because the repo is to big.
+^ Fixed issue where when you opened a feature request it did not assign the label.
 ------------------------------------------------------------
 Mar, 18
 + Added Defend the Tank
