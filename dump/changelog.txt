@@ -10,6 +10,10 @@ Here is where I will post updates on when a new game is added or something chang
 NOTE: Make sure you refresh the page! Sometimes you will not get the lastest update!
 
 ------------------------------------------------------------
+Mar, 22
++ Added contributors to site under dump tab (contributors.md) 🐧
+^ Fixed pages to remove quirks mode 🐧
+------------------------------------------------------------
 Mar, 21
 + Added Deal or No Deal (flash game, thank ruffle!)
 + Added ability to deploy using Glitch.com or Replit (Check main Readme.md file) 🐧
