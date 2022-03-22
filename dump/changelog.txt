@@ -12,7 +12,6 @@ NOTE: Make sure you refresh the page! Sometimes you will not get the lastest upd
 ------------------------------------------------------------
 Mar, 22
 + Added contributors to site under dump tab (contributors.md) 🐧
-^ Fixed pages to remove quirks mode 🐧
 ------------------------------------------------------------
 Mar, 21
 + Added Deal or No Deal (flash game, thank ruffle!)
