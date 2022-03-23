@@ -22,7 +22,7 @@ or, [download the repo here](https://github.com/3kh0/3kh0.github.io/archive/refs
 
 If the main site is blocked, you can use these options to get your own copy of the website.
 
-[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/import/github/3kh0/3kh0.github.io)
+[![Remix on Glitch](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/glitch.svg)](https://glitch.com/edit/#!/import/github/3kh0/3kh0.github.io)
 
 Replit does not work because the repo is to big.
 
@@ -45,6 +45,10 @@ There are many ways to can help this project!
 `/js`: JS files<br>
 `/img`: Photo assets<br>
 `/.github`: Files for GitHub<br>
+
+## Contriubuters
+
+<img src="https://contrib.rocks/image?repo=3kh0/3kh0.github.io" />
 
 ## License
 
