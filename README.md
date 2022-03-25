@@ -47,7 +47,7 @@ There are many ways to can help this project!
 `/img`: Photo assets<br>
 `/.github`: Files for GitHub<br>
 
-## Contriubuters
+## Contributors
 
 <img src="https://contrib.rocks/image?repo=3kh0/3kh0.github.io" />
 
