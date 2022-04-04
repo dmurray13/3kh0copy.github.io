@@ -229,7 +229,7 @@ html, body {
 }
 
 .caseDisplay:active {
-	padding-top: 0px;
+	padding-top: 0;
 }
 
 .caseInfoContainer {
@@ -460,7 +460,7 @@ html, body {
 	width: 70px;
 	height: 70px;
 	border: 1px #1B2329 solid;
-	margin: 6.5px 0px 0px 6.5px;
+	margin: 6.5px 0 0 6.5px;
 	float: left;
 	cursor: pointer;
 }
@@ -503,7 +503,7 @@ html, body {
 	width: 70px;
 	height: 70px;
 	border: 1px #1B2329 solid;
-	margin: 5px 0px 0px 7px;
+	margin: 5px 0 0 7px;
 	float: left;
 	cursor: pointer;
 }
@@ -538,7 +538,7 @@ html, body {
 
 .jackpotDepositor {
 	height: 80px;
-	margin: 5px 5px 0px 5px;
+	margin: 5px 5px 0;
 	background: #0E0E0E;
 	overflow: hidden;
 }
@@ -1018,7 +1018,7 @@ html, body {
 
 .mainInfoLabel {
 	color: #186144;
-	margin: 0px 10px;
+	margin: 0 10px;
 	height: 100%;
 	line-height: 30px;
 }
@@ -1086,7 +1086,7 @@ html, body {
 	width: 70px;
 	height: 70px;
 	border: 1px #1B2329 solid;
-	margin: 6.5px 0px 0px 6.5px;
+	margin: 6.5px 0 0 6.5px;
 	float: left;
 	cursor: pointer;
 }
@@ -1296,7 +1296,7 @@ div.knife {
 	text-align: center;
 	line-height: 40px;
 	color: #fff;
-	margin: 50px 0px 25px 20px;
+	margin: 50px 0 25px 20px;
 	width: 150px;
 	height: 40px;
 	background: linear-gradient(#1d7751, #0e382c);
