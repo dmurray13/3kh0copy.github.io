@@ -13,6 +13,7 @@ All the changes with the pengin emoji (🐧) are changes by Piplup7575, cat emoj
 -----------------------------------------------------------
 Apr, 6
 Fun fact! Github.com was unblocked for me (Echo)!!! Lets gooooooo!
++ Added Tube Jumpers
 + Added Papery Planes
 + Added Cell Machine
 - Removed BitLife (the limit popup cant be fixed)
