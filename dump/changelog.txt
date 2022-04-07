@@ -11,6 +11,9 @@ NOTE: Make sure you refresh the page! Sometimes you will not get the lastest upd
 
 All the changes with the pengin emoji (🐧) are changes by Piplup7575, cat emoji (🐱) by u4pak 
 -----------------------------------------------------------
+Apr, 7
+^ Added more info to README.md
+-----------------------------------------------------------
 Apr, 6
 Fun fact! Github.com was unblocked for me (Echo)!!! Lets gooooooo!
 + Added World's Hardest Game
