@@ -7,6 +7,8 @@
 
 This repo hosts my website. It is a revamp to the old one that can be found [here](https://github.com/3kh0/website-v1).
 
+[Join the discord!](https://discord.gg/6d2MNXWVmV)
+
 **You can view the actual site with this link: [3kh0.github.io](https://3kh0.github.io)**
 > If this link is blocked, read the [Unblocking](https://github.com/3kh0/3kh0.github.io#unblocking) section!
 
