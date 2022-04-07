@@ -13,29 +13,13 @@
 ![GitHub issues](https://img.shields.io/github/issues/3kh0/3kh0.github.io?logo=github&style=flat-square) 
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/3kh0/3kh0.github.io?label=Pull%20requests&logo=github&style=flat-square) 
 ![GitHub](https://img.shields.io/github/license/3kh0/3kh0.github.io?label=Licence&logo=github&style=flat-square) 
-![GitHub repo size](https://img.shields.io/github/repo-size/3kh0/3kh0.github.io?label=Repo%20size&logo=github&style=flat-square)
-
-</div>
+![GitHub forks](https://img.shields.io/github/forks/3kh0/3kh0.github.io?label=Forks&logo=github&style=flat-square) 
+![GitHub Repo stars](https://img.shields.io/github/stars/3kh0/3kh0.github.io?color=yellow&label=Stars&logo=github&style=flat-square) 
+![GitHub repo size](https://img.shields.io/github/repo-size/3kh0/3kh0.github.io?label=Repo%20size&logo=github&style=flat-square) 
 
 This repo hosts my website. It is a revamp to the old one that can be found [here](https://github.com/3kh0/website-v1).
 
-[Join the discord!](https://discord.gg/6d2MNXWVmV)
-
-**You can view the actual site with this link: [3kh0.github.io](https://3kh0.github.io)**
-> If this link is blocked, read the [Unblocking](https://github.com/3kh0/3kh0.github.io#unblocking) section!
-
-## Cloning
-
-You can clone this repo with this handy URL:
-```
-https://github.com/3kh0/3kh0.github.io.git
-```
-or use GitHub CLI:
-```bash
-gh repo clone 3kh0/3kh0.github.io
-```
-or, [download the repo here](https://github.com/3kh0/3kh0.github.io/archive/refs/heads/main.zip)
-> This will download a `.zip` file that is not connected to Git. **This is not recommended!**
+</div>
 
 ## Unblocking
 
@@ -43,7 +27,7 @@ If the main site is blocked, there are many ways you can get around this!
 
 ### Use the website
 
-People have already made alterate links to the website, they are listed in the discord server.
+People have already made alterate links to the website, they are listed in the [discord server](https://discord.gg/6d2MNXWVmV).
 
 This is the most easiest way to bypass school blocking!
 
@@ -58,6 +42,19 @@ Below are some of the options you can use to deploy your own copy of the site. *
 > [![Run on Replit](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/replit.svg)](https://replit.com/github/3kh0/3kh0.github.io)<br>
 > Only use Replit if you have the hacker plan on replit!
 
+
+## Cloning
+
+You can clone this repo with this handy URL:
+```
+https://github.com/3kh0/3kh0.github.io.git
+```
+or use GitHub CLI:
+```bash
+gh repo clone 3kh0/3kh0.github.io
+```
+or, [download the repo here](https://github.com/3kh0/3kh0.github.io/archive/refs/heads/main.zip)
+> This will download a `.zip` file that is not connected to Git. **This is not recommended!**
 
 ## Contributing
 
