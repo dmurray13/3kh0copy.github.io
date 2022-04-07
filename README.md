@@ -53,6 +53,8 @@ There are many ways to can help this project!
 - You can checkout the [issues](https://github.com/3kh0/3kh0.github.io/issues) tab and look for the `help wanted` label or take a look in the [pull request](https://github.com/3kh0/3kh0.github.io/pulls) tab to see if you can add your own review! 
 - If you have a game that you can add, please take a look at the guide on how to do that: [Click here](https://github.com/3kh0/3kh0.github.io/wiki/Guide:-Adding-games)
 
+If you open a pull request, and it gets merged, your avatar will appear below!
+
 ## Contributors
 
 <img src="https://contrib.rocks/image?repo=3kh0/3kh0.github.io" />
