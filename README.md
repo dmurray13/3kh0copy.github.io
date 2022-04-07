@@ -16,7 +16,12 @@ You can clone this repo with this handy URL:
 ```
 https://github.com/3kh0/3kh0.github.io.git
 ```
+or use GitHub CLI:
+```bash
+gh repo clone 3kh0/3kh0.github.io
+```
 or, [download the repo here](https://github.com/3kh0/3kh0.github.io/archive/refs/heads/main.zip)
+> This will download a `.zip` file that is not connected to Git. **This is not recommended!**
 
 ## Deploying
 
