@@ -27,7 +27,11 @@ If the main site is blocked, there are many ways you can get around this!
 
 ### Use the website
 
-People have already made alterate links to the website, they are listed in the [discord server](https://discord.gg/6d2MNXWVmV).
+People have already made alterate links to the website, they are listed in the discord server. Click the button below to join the discord
+
+<a target="_blank" href="https://discord.gg/6d2MNXWVmV">
+<img width="200px" alt="Join our Discord" src="https://raw.githubusercontent.com/3kh0/3kh0.github.io/master/img/Join_Discord-logo.png">
+</a>
 
 This is the most easiest way to bypass school blocking!
 
