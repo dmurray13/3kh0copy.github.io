@@ -26,7 +26,7 @@ If the main site is blocked, you can use these options to get your own copy of t
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2F3kh0%2F3kh0.github.io) 
 [![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/3kh0/3kh0.github.io)
 
-> [![Run on Replit ](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/replit.svg)](https://replit.com/github/3kh0/3kh0.github.io)<br>
+> [![Run on Replit](https://raw.githubusercontent.com/BinBashBanana/deploy-buttons/master/buttons/remade/replit.svg)](https://replit.com/github/3kh0/3kh0.github.io)<br>
 > Only use Replit if you have the hacker plan on replit!
 
 
@@ -37,18 +37,6 @@ There are many ways to can help this project!
 - Give this repo a nice little :star:!
 - You can checkout the [issues](https://github.com/3kh0/3kh0.github.io/issues) tab and look for the `help wanted` label or take a look in the [pull request](https://github.com/3kh0/3kh0.github.io/pulls) tab to see if you can add your own review! 
 - If you have a game that you can add, please take a look at the guide on how to do that: [Click here](https://github.com/3kh0/3kh0.github.io/wiki/Guide:-Adding-games)
-
-## Structure
-
-`index.html`: Main page<br>
-`comments.html`: Comments page<br>
-`404.html`: 404 page<br>
-`/projects`: Where all of the projects are hosted<br>
-`/dump`: Mostly just random pages that dont fit anywhere else<br>
-`/css`: CSS files<br>
-`/js`: JS files<br>
-`/img`: Photo assets<br>
-`/.github`: Files for GitHub<br>
 
 ## Contributors
 
