@@ -69,7 +69,7 @@ const devMode = localStorage.getItem('dev');
 const devScript = document.createElement("script");
 devScript.setAttribute("src", "https://eruda.liriliri.io/eruda.min.js");
 
-if (devMode === true) {
+if (devMode = true) {
   document.head.append(devScript);
   script("Injected script 2/2");
 } else {
