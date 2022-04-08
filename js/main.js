@@ -51,7 +51,7 @@ log("Tab cloak engine finished!");
 
 log("Preparing script injections!");
 console.groupCollapsed("Click to view Script Injection operations!");
-script("Preparing 2 scripts to be injected...");
+script("Preparing 1 script to be injected...");
 
 const gascript = document.createElement("script");
 gascript.setAttribute("async", "");
@@ -63,23 +63,8 @@ inlinegascript.innerHTML = `window.dataLayer = window.dataLayer || [];
   gtag('config', 'G-98DP5VKS42');`;
 document.head.append(gascript, inlinegascript);
 
-script("Injected script 1/2");
+script("Injected script 1/1");
 
-const devMode = localStorage.getItem('dev');
-const devScript = document.createElement("script");
-devScript.setAttribute("src", "https://eruda.liriliri.io/eruda.min.js");
-
-if (devMode = true) {
-  document.head.append(devScript);
-  script("Injected script 2/2");
-} else {
-  script("Skipped script 2/2");
-}
-
-function devMake() {
-  localStorage.setItem("dev", true);
-  console.log("Dev mode has been activated, please reload to see changes!");
-}
 
 console.groupEnd();
 log("Script injections finished!");
