@@ -26,6 +26,9 @@
       var url = document.getElementById("url-target");
       var urlObj = new window.URL(window.location.href);
       document.getElementById("create").onclick = function () {
+        if (url.value.substring(0, 8) !== 'https://' && url.value.substring(0, 7) !== 'http://') {
+    		url.value = 'https://' + url.value;
+        };
         win = window.open();
         win.document.body.style.margin = "0";
         win.document.body.style.height = "100vh";
@@ -39,8 +42,9 @@
         iframe.src = url.value;
         win.document.body.appendChild(iframe);
         var script = win.document.createElement("script");
-        script.src = "https://3kh0.github.io/js/main.js";
+        script.src = "../assets/js/main.js";
         win.document.body.appendChild(script);
+        console.log(url.value);
       };
     </script>
     <script src="https://3kh0.github.io/js/main.js"></script>
