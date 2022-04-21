@@ -21,6 +21,10 @@ NOTE: Make sure you refresh the page! Sometimes you will not get the lastest upd
 ^ Means something was upgraded or changed
 - Means something was removed
 ------------------------------------------------------------
+Apr, 21
++ Added more sounds to Soundboard 🐧
++ Added about:blank embed bookmarklet (Thanks fo-od!)
+------------------------------------------------------------
 Apr, 19
 ^ Fixed issue with ads showing on Tunnel Rush
 ------------------------------------------------------------
