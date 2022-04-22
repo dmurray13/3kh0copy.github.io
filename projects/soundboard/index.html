@@ -107,8 +107,9 @@
                 document.getElementById("hiyah").play();
                 document.getElementById("soviet").play();
                 document.getElementById("talking-ben-ho-ho-ho.mp3").play();
-                document.getElementById("whatdidhesay.mp3").play();
                 document.getElementById("winxpshutdown.mp3").play();
+                document.getElementById("stop-the-cap").play();
+                document.getElementById("hey-ya").play();
             }
             function stopAll() {
                 document.getElementById("fart").load();
@@ -187,8 +188,9 @@
                 document.getElementById("hiyah").load();
                 document.getElementById("soviet").load();
                 document.getElementById("talking-ben-ho-ho-ho.mp3").load();
-                document.getElementById("whatdidhesay.mp3").load();
                 document.getElementById("winxpshutdown.mp3").load();
+                document.getElementById("stop-the-cap").load();
+                document.getElementById("hey-ya").load();
             }
         </script>
         <div class="control">
@@ -1112,6 +1114,28 @@
                     <div class="small-button-shadow"></div>
                     <p class="name"><button onclick="window.location.href='sounds/winxpshutdown.mp3'">Download</button><br>
                     Windows XP Shutdown<br>
+                    </p>
+                </div>
+            </div>
+            <div>
+                <div class="sound">
+                 <div class="circle small-button-background" style="background-color:#fc0320;"></div>
+                  <audio id="stop-the-cap" src="sounds/stop-the-cap.mp3" preload="auto"></audio>
+                   <button class="small-button" onclick="document.getElementById('stop-the-cap').play();"></button>
+                    <div class="small-button-shadow"></div>
+                    <p class="name"><button onclick="window.location.href='sounds/stop-the-cap.mp3'">Download</button><br>
+                    Stop the Cap!<br>
+                    </p>
+                </div>
+            </div>
+            <div>
+                <div class="sound">
+                 <div class="circle small-button-background" style="background-color:#00FF00;"></div>
+                  <audio id="hey-ya" src="sounds/hey-ya.mp3" preload="auto"></audio>
+                   <button class="small-button" onclick="document.getElementById('hey-ya').play();"></button>
+                    <div class="small-button-shadow"></div>
+                    <p class="name"><button onclick="window.location.href='sounds/hey-ya.mp3'">Download</button><br>
+                    Outkast Hey Ya!<br>
                     </p>
                 </div>
             </div>
