@@ -112,6 +112,7 @@
         document.getElementById("hey-ya").play();
         document.getElementById("who-touch-my").play();
         document.getElementById("oh-baby-a-triple").play();
+        document.getElementById("x-games-mode").play();
       }
       function stopAll() {
         document.getElementById("fart").load();
@@ -195,6 +196,7 @@
         document.getElementById("hey-ya").load();
         document.getElementById("who-touch-my").load();
         document.getElementById("oh-baby-a-triple").load();
+        document.getElementById("x-games-mode").load();
       }
     </script>
     <div class="control">
@@ -1198,6 +1200,18 @@
           <p class="name">
             <button onclick="window.location.href='sounds/who-touch-my.mp3'">Download</button><br />
             Who toucha my spaget!!<br />
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="sound">
+          <div class="circle small-button-background" style="background-color: #00ff00;"></div>
+          <audio id="x-games-mode" src="sounds/x-games-mode.mp3" preload="auto"></audio>
+          <button class="small-button" onclick="document.getElementById('x-games-mode').play();"></button>
+          <div class="small-button-shadow"></div>
+          <p class="name">
+            <button onclick="window.location.href='sounds/x-games-mode.mp3'">Download</button><br />
+            He on X-Games mode!<br />
           </p>
         </div>
       </div>
