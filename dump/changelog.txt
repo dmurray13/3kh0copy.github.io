@@ -25,6 +25,7 @@ Apr, 25
 + Added 30.mp3
 + Added Game inside a Game
 ^ Updated green text
+^ Added more sounds to the soundboard
 ------------------------------------------------------------
 Apr, 23
 + Added Smash Karts 🐧
