@@ -115,6 +115,7 @@
         document.getElementById("x-games-mode").play();
         document.getElementById("ben-yes").play();
         document.getElementById("roblox-num-num").play();
+        document.getElementById("mc-anvil").play();
       }
       function stopAll() {
         document.getElementById("fart").load();
@@ -201,6 +202,7 @@
         document.getElementById("x-games-mode").load();
         document.getElementById("ben-yes").load();
         document.getElementById("roblox-num-num").load();
+        document.getElementById("mc-anvil").load();
       }
     </script>
     <div class="control">
@@ -1243,20 +1245,32 @@
           </p>
         </div>
       </div>
+      <div>
+        <div class="sound">
+          <div class="circle small-button-background" style="background-color:#414345;"></div>
+          <audio id="mc-anvil" src="sounds/mc-anvil.mp3" preload="auto"></audio>
+          <button class="small-button" onclick="document.getElementById('mc-anvil').play();"></button>
+          <div class="small-button-shadow"></div>
+          <p class="name">
+            <button onclick="window.location.href='sounds/mc-anvil.mp3'">Download</button><br>
+            Minecraft Anvil<br>
+          </p>
+        </div>
+      </div>
 
       <!-- TEMPLATE TO ADD MORE SOUNDS
 
 <div>
   <div class="sound">
     <div class="circle small-button-background" style="background-color:#COLOR;"></div>
-      <audio id="SOUND" src="sounds/SOUND.mp3" preload="auto"></audio>
-      <button class="small-button" onclick="document.getElementById('SOUND').play();"></button>
-      <div class="small-button-shadow"></div>
-      <p class="name">
-        <button onclick="window.location.href='sounds/SOUND.mp3'">Download</button><br>
-        SOUND<br>
-      </p>
-    </div>
+    <audio id="SOUND" src="sounds/SOUND.mp3" preload="auto"></audio>
+    <button class="small-button" onclick="document.getElementById('SOUND').play();"></button>
+    <div class="small-button-shadow"></div>
+    <p class="name">
+      <button onclick="window.location.href='sounds/SOUND.mp3'">Download</button><br>
+      SOUND<br>
+    </p>
+  </div>
 </div>
 
 -->
