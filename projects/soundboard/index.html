@@ -118,6 +118,7 @@
         document.getElementById("mc-anvil").play();
         document.getElementById("wii-sports-aww").play();
         document.getElementById("crona-time").play();
+        document.getElementById("guess-who-back").play();
       }
       function stopAll() {
         document.getElementById("fart").load();
@@ -207,6 +208,7 @@
         document.getElementById("mc-anvil").load();
         document.getElementById("wii-sports-aww").load();
         document.getElementById("crona-time").load();
+        document.getElementById("guess-who-back").load();
       }
     </script>
     <div class="control">
@@ -1282,6 +1284,18 @@
           <p class="name">
             <button onclick="window.location.href='sounds/crona-time.mp3'">Download</button><br>
             It's Corona Time<br>
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="sound">
+          <div class="circle small-button-background" style="background-color:#63c73c;"></div>
+          <audio id="guess-who-back" src="sounds/guess-who-back.mp3" preload="auto"></audio>
+          <button class="small-button" onclick="document.getElementById('guess-who-back').play();"></button>
+          <div class="small-button-shadow"></div>
+          <p class="name">
+            <button onclick="window.location.href='sounds/guess-who-back.mp3'">Download</button><br>
+            Guess who's back!<br>
           </p>
         </div>
       </div>
