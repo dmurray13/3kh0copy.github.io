@@ -1,2 +1,0 @@
-https://v6p9d9t4.ssl.hwcdn.net/html/5274979/Build/web.data.gz
-https://v6p9d9t4.ssl.hwcdn.net/html/5274979/Build/web.wasm.gz
