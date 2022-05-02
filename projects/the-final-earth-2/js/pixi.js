@@ -30592,7 +30592,6 @@
   
       BitmapText.prototype.updateText = function updateText() {
           var data = BitmapText.fonts[this._font.name];
-          var scale = this._font.size / data.size;
           var pos = new core.Point();
           var chars = [];
           var lineWidths = [];
@@ -30785,7 +30784,6 @@
           var res = texture.baseTexture.resolution || _settings2.default.RESOLUTION;
   
           data.font = info.getAttribute('face');
-          data.size = parseInt(info.getAttribute('size'), 10);
           data.lineHeight = parseInt(common.getAttribute('lineHeight'), 10) / res;
           data.chars = {};
   
