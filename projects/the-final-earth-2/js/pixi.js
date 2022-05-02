@@ -30710,8 +30710,6 @@
           }
           this._glyphs.splice(lenChars);
   
-          this._textHeight = (pos.y + data.lineHeight) * scale;
-  
           // apply anchor
           if (this.anchor.x !== 0 || this.anchor.y !== 0) {
               for (var _i4 = 0; _i4 < lenChars; _i4++) {
@@ -30719,7 +30717,6 @@
                   this._glyphs[_i4].y -= this._textHeight * this.anchor.y;
               }
           }
-          this._maxLineHeight = maxLineHeight * scale;
       };
   
       /**
