@@ -30904,7 +30904,7 @@
                   value = value.split(' ');
   
                   this._font.name = value.length === 1 ? value[0] : value.slice(1).join(' ');
-                  this._font.size = value.length >= 2 ? parseInt(value[0], 10) : BitmapText.fonts[this._font.name].size;
+                  // this._font.size = value.length >= 2 ? parseInt(value[0], 10) : BitmapText.fonts[this._font.name].size;
               } else {
                   this._font.name = value.name;
                   this._font.size = typeof value.size === 'number' ? value.size : parseInt(value.size, 10);
@@ -40664,5 +40664,3 @@
   },{"./accessibility":42,"./core":65,"./deprecation":130,"./extract":132,"./extras":141,"./filters":152,"./interaction":159,"./loaders":162,"./mesh":171,"./particles":174,"./polyfill":180,"./prepare":184}]},{},[188])(188)
   });
   
-  
-  //# sourceMappingURL=pixi.js.map
