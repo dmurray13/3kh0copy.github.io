@@ -30592,6 +30592,7 @@
   
       BitmapText.prototype.updateText = function updateText() {
           var data = BitmapText.fonts[this._font.name];
+          var scale = this._font.size / data.size;
           var pos = new core.Point();
           var chars = [];
           var lineWidths = [];
@@ -30710,6 +30711,9 @@
           }
           this._glyphs.splice(lenChars);
   
+          this._textWidth = maxLineWidth * scale;
+          this._textHeight = (pos.y + data.lineHeight) * scale;
+  
           // apply anchor
           if (this.anchor.x !== 0 || this.anchor.y !== 0) {
               for (var _i4 = 0; _i4 < lenChars; _i4++) {
@@ -30717,6 +30721,7 @@
                   this._glyphs[_i4].y -= this._textHeight * this.anchor.y;
               }
           }
+          this._maxLineHeight = maxLineHeight * scale;
       };
   
       /**
@@ -30780,6 +30785,7 @@
           var res = texture.baseTexture.resolution || _settings2.default.RESOLUTION;
   
           data.font = info.getAttribute('face');
+          data.size = parseInt(info.getAttribute('size'), 10);
           data.lineHeight = parseInt(common.getAttribute('lineHeight'), 10) / res;
           data.chars = {};
   
@@ -30898,7 +30904,7 @@
                   value = value.split(' ');
   
                   this._font.name = value.length === 1 ? value[0] : value.slice(1).join(' ');
-                  // this._font.size = value.length >= 2 ? parseInt(value[0], 10) : BitmapText.fonts[this._font.name].size;
+                  this._font.size = value.length >= 2 ? parseInt(value[0], 10) : BitmapText.fonts[this._font.name].size;
               } else {
                   this._font.name = value.name;
                   this._font.size = typeof value.size === 'number' ? value.size : parseInt(value.size, 10);
@@ -40657,4 +40663,3 @@
   
   },{"./accessibility":42,"./core":65,"./deprecation":130,"./extract":132,"./extras":141,"./filters":152,"./interaction":159,"./loaders":162,"./mesh":171,"./particles":174,"./polyfill":180,"./prepare":184}]},{},[188])(188)
   });
-  
