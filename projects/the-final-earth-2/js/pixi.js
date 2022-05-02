@@ -30710,7 +30710,6 @@
           }
           this._glyphs.splice(lenChars);
   
-          this._textWidth = maxLineWidth * scale;
           this._textHeight = (pos.y + data.lineHeight) * scale;
   
           // apply anchor
