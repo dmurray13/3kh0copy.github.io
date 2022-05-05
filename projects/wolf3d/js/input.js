@@ -150,7 +150,7 @@ Wolf.Input = (function() {
     function checkKeys(ckeys) {
         for (var i=0;i<ckeys.length;i++) {
             var k = ckeys[i];
-            if (!!keys[Wolf.Keys[k]]) {
+            if (keys[Wolf.Keys[k]]) {
                 return true;
             }
         }
